@@ -1,0 +1,1118 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="profile" href="https://gmpg.org/xfn/11" />
+	<title>Boston After Dark &#8211; A Pondering Mind</title>
+<script type="text/javascript">
+  WebFontConfig = {"google":{"families":["Merriweather:r:latin,latin-ext","Merriweather:r,i,b,bi:latin,latin-ext"]}};
+  (function() {
+    var wf = document.createElement('script');
+    wf.src = 'https://s0.wp.com/wp-content/plugins/custom-fonts/js/webfont.js';
+    wf.type = 'text/javascript';
+    wf.async = 'true';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(wf, s);
+	})();
+</script><style id="jetpack-custom-fonts-css"></style>
+
+<!-- Async WordPress.com Remote Login -->
+<script id="wpcom_remote_login_js">
+var wpcom_remote_login_extra_auth = '';
+function wpcom_remote_login_remove_dom_node_id( element_id ) {
+	var dom_node = document.getElementById( element_id );
+	if ( dom_node ) { dom_node.remove(); }
+}
+function wpcom_remote_login_remove_dom_node_classes( class_name ) {
+	var dom_nodes = document.querySelectorAll( '.' + class_name );
+	for ( var i = 0; i < dom_nodes.length; i++ ) {
+		dom_nodes[i].remove();
+	}
+}
+function wpcom_remote_login_final_cleanup() {
+	wpcom_remote_login_remove_dom_node_classes( "wpcom_remote_login_msg" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_key" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_validate" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_js" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_request_access_iframe" );
+	wpcom_remote_login_remove_dom_node_id( "wpcom_request_access_styles" );
+}
+
+// Watch for messages back from the remote login
+window.addEventListener( "message", function( e ) {
+	if ( e.origin === "https://r-login.wordpress.com" ) {
+		var data = {};
+		try {
+			data = JSON.parse( e.data );
+		} catch( e ) {
+			wpcom_remote_login_final_cleanup();
+			return;
+		}
+
+		if ( data.msg === 'LOGIN' ) {
+			// Clean up the login check iframe
+			wpcom_remote_login_remove_dom_node_id( "wpcom_remote_login_key" );
+
+			var id_regex = new RegExp( /^[0-9]+$/ );
+			var token_regex = new RegExp( /^.*|.*|.*$/ );
+			if (
+				token_regex.test( data.token )
+				&& id_regex.test( data.wpcomid )
+			) {
+				// We have everything we need to ask for a login
+				var script = document.createElement( "script" );
+				script.setAttribute( "id", "wpcom_remote_login_validate" );
+				script.src = '/remote-login.php?wpcom_remote_login=validate'
+					+ '&wpcomid=' + data.wpcomid
+					+ '&token=' + encodeURIComponent( data.token )
+					+ '&host=' + window.location.protocol
+						+ '//' + window.location.hostname;
+				document.body.appendChild( script );
+			}
+
+			return;
+		}
+
+		// Safari ITP, not logged in, so redirect
+		if ( data.msg === 'LOGIN-REDIRECT' ) {
+			window.location = 'https://wordpress.com/log-in?redirect_to=' + window.location.href;
+			return;
+		}
+
+		// Safari ITP, storage access failed, remove the request
+		if ( data.msg === 'LOGIN-REMOVE' ) {
+			var css_zap = 'html { -webkit-transition: margin-top 1s; transition: margin-top 1s; } /* 9001 */ html { margin-top: 0 !important; } * html body { margin-top: 0 !important; } @media screen and ( max-width: 782px ) { html { margin-top: 0 !important; } * html body { margin-top: 0 !important; } }';
+			var style_zap = document.createElement( 'style' );
+			style_zap.type = 'text/css';
+			style_zap.appendChild( document.createTextNode( css_zap ) );
+			document.body.appendChild( style_zap );
+
+			var e = document.getElementById( 'wpcom_request_access_iframe' );
+			e.parentNode.removeChild( e );
+
+			document.cookie = 'wordpress_com_login_access=denied; path=/; max-age=31536000';
+
+			return;
+		}
+
+		// Safari ITP
+		if ( data.msg === 'REQUEST_ACCESS' ) {
+			console.log( 'request access: safari' );
+
+			// Check ITP iframe enable/disable knob
+			if ( wpcom_remote_login_extra_auth !== 'safari_itp_iframe' ) {
+				return;
+			}
+
+			// If we are in a "private window" there is no ITP.
+			var private_window = false;
+			try {
+				var opendb = window.openDatabase( null, null, null, null );
+			} catch( e ) {
+				private_window = true;
+			}
+
+			if ( private_window ) {
+				console.log( 'private window' );
+				return;
+			}
+
+			var iframe = document.createElement( 'iframe' );
+			iframe.id = 'wpcom_request_access_iframe';
+			iframe.setAttribute( 'scrolling', 'no' );
+			iframe.setAttribute( 'sandbox', 'allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-top-navigation-by-user-activation' );
+			iframe.src = 'https://r-login.wordpress.com/remote-login.php?wpcom_remote_login=request_access&origin=' + encodeURIComponent( data.origin ) + '&wpcomid=' + encodeURIComponent( data.wpcomid );
+
+			var css = 'html { -webkit-transition: margin-top 1s; transition: margin-top 1s; } /* 9001 */ html { margin-top: 46px !important; } * html body { margin-top: 46px !important; } @media screen and ( max-width: 660px ) { html { margin-top: 71px !important; } * html body { margin-top: 71px !important; } #wpcom_request_access_iframe { display: block; height: 71px !important; } } #wpcom_request_access_iframe { border: 0px; height: 46px; position: fixed; top: 0; left: 0; width: 100%; min-width: 100%; z-index: 99999; background: #23282d; } ';
+
+			var style = document.createElement( 'style' );
+			style.type = 'text/css';
+			style.id = 'wpcom_request_access_styles';
+			style.appendChild( document.createTextNode( css ) );
+			document.body.appendChild( style );
+
+			document.body.appendChild( iframe );
+		}
+
+		if ( data.msg === 'DONE' ) {
+			wpcom_remote_login_final_cleanup();
+		}
+	}
+}, false );
+
+// Inject the remote login iframe after the page has had a chance to load
+// more critical resources
+window.addEventListener( "DOMContentLoaded", function( e ) {
+	var iframe = document.createElement( "iframe" );
+	iframe.style.display = "none";
+	iframe.setAttribute( "scrolling", "no" );
+	iframe.setAttribute( "id", "wpcom_remote_login_key" );
+	iframe.src = "https://r-login.wordpress.com/remote-login.php"
+		+ "?wpcom_remote_login=key"
+		+ "&origin=aHR0cHM6Ly9hcG9uZGVyaW5nbWluZC5vcmc%3D"
+		+ "&wpcomid=11283610"
+		+ "&time=1590338127";
+	document.body.appendChild( iframe );
+}, false );
+</script>
+<link rel='dns-prefetch' href='//s0.wp.com' />
+<link rel='dns-prefetch' href='//doninmass.wordpress.com' />
+<link rel='dns-prefetch' href='//wordpress.com' />
+<link rel='dns-prefetch' href='//fonts.googleapis.com' />
+<link rel="alternate" type="application/rss+xml" title="A Pondering Mind &raquo; Feed" href="https://aponderingmind.org/feed/" />
+<link rel="alternate" type="application/rss+xml" title="A Pondering Mind &raquo; Comments Feed" href="https://aponderingmind.org/comments/feed/" />
+<link rel="alternate" type="application/rss+xml" title="A Pondering Mind &raquo; Boston After Dark Comments Feed" href="https://aponderingmind.org/2013/04/01/boston-after-dark/feed/" />
+	<script type="text/javascript">
+		/* <![CDATA[ */
+		function addLoadEvent(func) {
+			var oldonload = window.onload;
+			if (typeof window.onload != 'function') {
+				window.onload = func;
+			} else {
+				window.onload = function () {
+					oldonload();
+					func();
+				}
+			}
+		}
+		/* ]]> */
+	</script>
+			<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s0.wp.com\/wp-content\/mu-plugins\/wpcom-smileys\/twemoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/s0.wp.com\/wp-includes\/js\/wp-emoji-release.min.js?m=1582709031h&ver=5.4.1"}};
+			/*! This file is auto-generated */
+			!function(e,a,t){var r,n,o,i,p=a.createElement("canvas"),s=p.getContext&&p.getContext("2d");function c(e,t){var a=String.fromCharCode;s.clearRect(0,0,p.width,p.height),s.fillText(a.apply(this,e),0,0);var r=p.toDataURL();return s.clearRect(0,0,p.width,p.height),s.fillText(a.apply(this,t),0,0),r===p.toDataURL()}function l(e){if(!s||!s.fillText)return!1;switch(s.textBaseline="top",s.font="600 32px Arial",e){case"flag":return!c([127987,65039,8205,9895,65039],[127987,65039,8203,9895,65039])&&(!c([55356,56826,55356,56819],[55356,56826,8203,55356,56819])&&!c([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]));case"emoji":return!c([55357,56424,55356,57342,8205,55358,56605,8205,55357,56424,55356,57340],[55357,56424,55356,57342,8203,55358,56605,8203,55357,56424,55356,57340])}return!1}function d(e){var t=a.createElement("script");t.src=e,t.defer=t.type="text/javascript",a.getElementsByTagName("head")[0].appendChild(t)}for(i=Array("flag","emoji"),t.supports={everything:!0,everythingExceptFlag:!0},o=0;o<i.length;o++)t.supports[i[o]]=l(i[o]),t.supports.everything=t.supports.everything&&t.supports[i[o]],"flag"!==i[o]&&(t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&t.supports[i[o]]);t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&!t.supports.flag,t.DOMReady=!1,t.readyCallback=function(){t.DOMReady=!0},t.supports.everything||(n=function(){t.readyCallback()},a.addEventListener?(a.addEventListener("DOMContentLoaded",n,!1),e.addEventListener("load",n,!1)):(e.attachEvent("onload",n),a.attachEvent("onreadystatechange",function(){"complete"===a.readyState&&t.readyCallback()})),(r=t.source||{}).concatemoji?d(r.concatemoji):r.wpemoji&&r.twemoji&&(d(r.twemoji),d(r.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link rel='stylesheet' id='all-css-0-1' href='https://s0.wp.com/_static/??-eJytU9FuwyAM/KERytKp7cO0byGJy2ghRNgsy9+PAK22bMoqtW/Y+M72wfFxYK3rCXriNrDBBKV75OPQOsvQagPTIqpaxCf+N8yDkQQdGxzSIlqDGX0G5CegQbZnlqJf5ZdaFWLYgFfxxgPfV6LasDQgb4I2HW+MSySNl37iSJOBR5HRO9hbyBLq20JycoGY8rq7eZ4FhZeke4X/wI/BGIaagEGnZ0BRmAuxqettLfa8hxETY2nQaaR5S5VfKafZh4bx4V1a6V1AMA/qMXiwOtgrdF2a1pVRRPVcV5syUUmyu2XN4plImrfL/MvsmgfmDxjzdpA0V9jYSoKJ/62nNdioOwXRa7GknBnB5zokublpooCI7CJj+turLo2oeZrsz9TwRyZDNe8d6YjG6+E+w5Sro3dZiDf7Kl72h8Nht92J0xdbucOk?cssminify=yes' type='text/css' media='all' />
+<style id='wp-block-library-inline-css'>
+.has-text-align-justify {
+	text-align:justify;
+}
+</style>
+<link rel='stylesheet' id='print-css-1-1' href='https://s0.wp.com/wp-content/themes/pub/varia/print.css?m=1571655471h&cssminify=yes' type='text/css' media='print' />
+<link rel='stylesheet' id='all-css-2-1' href='https://s0.wp.com/_static/??-eJx9jUEOwiAQRS8kThtTdWM8C+BIMcAQZijx9mLc1Ni4ez95Lx9aVpaSYBKQGSMy5GqAZ91MLQlYngH3lnkH2+aii9fgk/2oqmVL8SeIVeVQnU8Mzd8cCoNQVpm40/bHKnFIKpDV4il9DXUP2pd/aUETyHV00K3VfEfXeBmn82k8DsN0eLwACKZjnQ==?cssminify=yes' type='text/css' media='all' />
+<link crossorigin="anonymous" rel='stylesheet' id='shawburn-fonts-css'  href='https://fonts.googleapis.com/css?family=PT+Sans%3A400%2C400i%2C700%2C700i%7CPT+Serif%3A400%2C400i%2C700%2C700i&#038;subset=latin%2Clatin-ext' media='all' />
+<link rel='stylesheet' id='all-css-4-1' href='https://s0.wp.com/_static/??/wp-content/themes/pub/shawburn/style.css,/wp-content/mu-plugins/actionbar/actionbar.css?m=1587160053j&cssminify=yes' type='text/css' media='all' />
+<style id='jetpack-global-styles-frontend-style-inline-css'>
+:root { --font-headings: unset; --font-base: unset; --font-headings-default: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif; --font-base-default: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;}
+</style>
+<link rel='stylesheet' id='all-css-6-1' href='https://s0.wp.com/_static/??-eJxti0EKgCAQAD+ULWGJHaK3mJgaqyut0fejQ4eo0zAwA2cRlnJ1uUI6RMHDx8xQiKtY0cQdOJg9Zv+wtcwN/F9MNhoUSJ7e8plqcMkxhB480mLwDuY0dYMepVJaqu0CZXY33g==?cssminify=yes' type='text/css' media='all' />
+<script>
+var related_posts_js_options = {"post_heading":"h4"};
+</script>
+<script type='text/javascript' src='https://s0.wp.com/_static/??-eJx9jMEOwjAMQ3+IruzABgfEt4wtVKmatDSNpv39ggSXHZAsWbae7dfikOekC4iPprdC3b7WRTn5f4AjDHVq0BHyD54zN+D2YSk/MYFTgToF6+zolY8cqStJA7L4CsnOFleytEOy1YPu/WXsb+dxGK5xB1+BRFU='></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://doninmass.wordpress.com/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://s0.wp.com/wp-includes/wlwmanifest.xml" /> 
+<link rel='prev' title='Dead Man Walking' href='https://aponderingmind.org/2013/04/01/dead-man-walking/' />
+<link rel='next' title='Boston Early Evening' href='https://aponderingmind.org/2013/04/01/boston-early-evening/' />
+<meta name="generator" content="WordPress.com" />
+<link rel="canonical" href="https://aponderingmind.org/2013/04/01/boston-after-dark/" />
+<link rel='shortlink' href='https://wp.me/pLlnI-3um' />
+<link rel="alternate" type="application/json+oembed" href="https://public-api.wordpress.com/oembed/?format=json&amp;url=https%3A%2F%2Faponderingmind.org%2F2013%2F04%2F01%2Fboston-after-dark%2F&amp;for=wpcom-auto-discovery" /><link rel="alternate" type="application/xml+oembed" href="https://public-api.wordpress.com/oembed/?format=xml&amp;url=https%3A%2F%2Faponderingmind.org%2F2013%2F04%2F01%2Fboston-after-dark%2F&amp;for=wpcom-auto-discovery" />
+<!-- Jetpack Open Graph Tags -->
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Boston After Dark" />
+<meta property="og:url" content="https://aponderingmind.org/2013/04/01/boston-after-dark/" />
+<meta property="og:description" content="Back Bay section of Boston seen from Cambridge. Click on image to enlarge. Source:" />
+<meta property="article:published_time" content="2013-04-01T20:39:46+00:00" />
+<meta property="article:modified_time" content="2013-04-01T21:09:52+00:00" />
+<meta property="og:site_name" content="A Pondering Mind" />
+<meta property="og:image" content="https://doninmass.files.wordpress.com/2013/04/night-cities-boston-landscapes-images-download-free-backgrounds-wallpapers.jpg" />
+<meta property="og:image:width" content="808" />
+<meta property="og:image:height" content="505" />
+<meta property="og:image:alt" content="Boston and the Charles River." />
+<meta property="og:locale" content="en_US" />
+<meta name="twitter:creator" content="@APonderingMan" />
+<meta name="twitter:site" content="@APonderingMan" />
+<meta name="twitter:text:title" content="Boston After Dark" />
+<meta name="twitter:image" content="https://doninmass.files.wordpress.com/2013/04/night-cities-boston-landscapes-images-download-free-backgrounds-wallpapers.jpg?w=640" />
+<meta name="twitter:image:alt" content="Boston and the Charles River." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="article:publisher" content="https://www.facebook.com/WordPresscom" />
+
+<!-- End Jetpack Open Graph Tags -->
+<link rel='openid.server' href='https://aponderingmind.org/?openidserver=1' />
+<link rel='openid.delegate' href='https://aponderingmind.org/' />
+<link rel="search" type="application/opensearchdescription+xml" href="https://aponderingmind.org/osd.xml" title="A Pondering Mind" />
+<link rel="search" type="application/opensearchdescription+xml" href="https://s1.wp.com/opensearch.xml" title="WordPress.com" />
+		<style type="text/css">
+			.recentcomments a {
+				display: inline !important;
+				padding: 0 !important;
+				margin: 0 !important;
+			}
+
+			table.recentcommentsavatartop img.avatar, table.recentcommentsavatarend img.avatar {
+				border: 0px;
+				margin: 0;
+			}
+
+			table.recentcommentsavatartop a, table.recentcommentsavatarend a {
+				border: 0px !important;
+				background-color: transparent !important;
+			}
+
+			td.recentcommentsavatarend, td.recentcommentsavatartop {
+				padding: 0px 0px 1px 0px;
+				margin: 0px;
+			}
+
+			td.recentcommentstextend {
+				border: none !important;
+				padding: 0px 0px 2px 10px;
+			}
+
+			.rtl td.recentcommentstextend {
+				padding: 0px 10px 2px 0px;
+			}
+
+			td.recentcommentstexttop {
+				border: none;
+				padding: 0px 0px 0px 10px;
+			}
+
+			.rtl td.recentcommentstexttop {
+				padding: 0px 10px 0px 0px;
+			}
+		</style>
+				<script type="text/javascript">
+		function __ATA_CC() {var v = document.cookie.match('(^|;) ?personalized-ads-consent=([^;]*)(;|$)');return v ? 1 : 0;}
+		var __ATA_PP = { pt: 1, ht: 0, tn: 'shawburn', amp: false, siteid: 8982, blogid: 11283610, consent: __ATA_CC() };
+		</script>
+		<script type="text/javascript">
+		!function(t){var n={};function e(r){if(n[r])return n[r].exports;var o=n[r]={i:r,l:!1,exports:{}};return t[r].call(o.exports,o,o.exports,e),o.l=!0,o.exports}e.m=t,e.c=n,e.d=function(t,n,r){e.o(t,n)||Object.defineProperty(t,n,{enumerable:!0,get:r})},e.r=function(t){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},e.t=function(t,n){if(1&n&&(t=e(t)),8&n)return t;if(4&n&&"object"==typeof t&&t&&t.__esModule)return t;var r=Object.create(null);if(e.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:t}),2&n&&"string"!=typeof t)for(var o in t)e.d(r,o,function(n){return t[n]}.bind(null,o));return r},e.n=function(t){var n=t&&t.__esModule?function(){return t.default}:function(){return t};return e.d(n,"a",n),n},e.o=function(t,n){return Object.prototype.hasOwnProperty.call(t,n)},e.p="https://c0.pubmine.com/2.6.01584004761084/",e(e.s=184)}({0:function(t,n){t.exports=function(t,n,e){return n in t?Object.defineProperty(t,n,{value:e,enumerable:!0,configurable:!0,writable:!0}):t[n]=e,t}},1:function(t,n){t.exports=function(t,n){if(!(t instanceof n))throw new TypeError("Cannot call a class as a function")}},10:function(t,n,e){"use strict";var r=e(50),o=e(17),i=e(23);t.exports=function(t,n,e){if(!r(t))return e;if(!o(n))return e;try{var u=n.split(".").reduce((function(t,n){return t[n]}),t);return i(u)?e:u}catch(t){return e}}},12:function(t,n){function e(n){return"function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?t.exports=e=function(t){return typeof t}:t.exports=e=function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},e(n)}t.exports=e},14:function(t,n,e){"use strict";t.exports=function(t){return"function"==typeof t}},15:function(t,n,e){"use strict";t.exports=function(){}},17:function(t,n,e){"use strict";t.exports=function(t){return"string"==typeof t}},184:function(t,n,e){"use strict";e.r(n);var r=e(0),o=e.n(r),i=e(12),u=e.n(i),c=e(32),f=e.n(c),s=e(15),a=e.n(s),p=e(37),l=e.n(p),d=e(52),v=e(53),m=e(28);function y(t,n){var e=Object.keys(t);if(Object.getOwnPropertySymbols){var r=Object.getOwnPropertySymbols(t);n&&(r=r.filter((function(n){return Object.getOwnPropertyDescriptor(t,n).enumerable}))),e.push.apply(e,r)}return e}function b(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{},n={};"object"===u()(window.__ATA_PP)&&null!==window.__ATA_PP&&(n=window.__ATA_PP);var e=function(t){for(var n=1;n<arguments.length;n++){var e=null!=arguments[n]?arguments[n]:{};n%2?y(Object(e),!0).forEach((function(n){o()(t,n,e[n])})):Object.getOwnPropertyDescriptors?Object.defineProperties(t,Object.getOwnPropertyDescriptors(e)):y(Object(e)).forEach((function(n){Object.defineProperty(t,n,Object.getOwnPropertyDescriptor(e,n))}))}return t}({r:(new Date).getTime()},n,{},Object(d.a)(t),{ref:window.top!==window?document.referrer:window.location.href,us_privacy:Object(v.a)()}),r=l()("//s.pubmine.com/mhead.js",e);f()(r,a.a)}Object(m.b)()?Object(m.a)().then(b,b):b()},2:function(t,n){function e(t,n){for(var e=0;e<n.length;e++){var r=n[e];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(t,r.key,r)}}t.exports=function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}},21:function(t,n,e){"use strict";t.exports=function(t){return"string"==typeof t&&t.length>0}},23:function(t,n,e){"use strict";t.exports=function(t){return void 0===t}},24:function(t,n,e){"use strict";t.exports=function(t,n){return t.indexOf(n)>-1}},28:function(t,n,e){"use strict";e.d(n,"a",(function(){return p})),e.d(n,"b",(function(){return l}));var r=e(38),o=e.n(r),i=e(10),u=e.n(i),c=e(14),f=e.n(c),s=e(4);function a(t){var n=Date.now();return function(t){return new o.a((function(n,e){var r;window.setTimeout((function(){clearTimeout(r),e&&e("cmp ping timeout")}),t),function t(){window.__cmp?window.__cmp("ping",null,(function(o,i){i&&o.cmpLoaded?n():i?r=window.setTimeout(t,50):e&&e("cmp ping returned error with data: ".concat(JSON.stringify(o)))})):e&&e("CMP is not defined")}()}))}(t).then((function(){var e=Date.now()-n,r=t-e;return new o.a((function(t,n){window.__cmp?(window.__cmp("getConsentData",null,(function(e,r){r?t(e):n&&n("cmp getConsentData returned error with data: ".concat(JSON.stringify(e)))})),setTimeout((function(){n&&n("cmp getConsentData timeout")}),r)):n&&n("CMP is not defined")}))}))}function p(){return a(arguments.length>0&&void 0!==arguments[0]?arguments[0]:500).catch((function(t){return s.a.error(t),"boolean"==typeof(n=u()(window,"__ATA_PP.gdpr_applies"))?{gdprApplies:n}:{};var n}))}function l(){return f()(window.__cmp)}},29:function(t,n,e){"use strict";t.exports=function(t,n){for(var e=0,r=t.length;e<r;e++){var o=t[e];if(n(o,e))return o}return null}},30:function(t,n,e){"use strict";var r=e(29),o=e(24);t.exports=function(t,n){void 0===n&&(n=document.cookie);var e=n.split("; "),i=r(e,(function(n){return o(n,t+"=")}));return i?i.split("=")[1]:""}},32:function(t,n,e){"use strict";var r=e(15),o=e(14);t.exports=function(t,n,e){var i,u,c=document.createElement("script"),f=n instanceof HTMLElement&&n;if(i=o(n)?n:o(e)?e:r,c.src=t,c.onload=function(){i(void 0)},c.onerror=function(){i("error")},f)u=f;else{var s=document.getElementsByTagName("head");u=s&&0!==s.length?s[0]:document.documentElement}u.appendChild(c)}},37:function(t,n,e){"use strict";var r=e(24),o=e(89);t.exports=function(t,n){var e=o(n);return 0===e.length?t:t+(r(t,"?")?"&":"?")+e}},38:function(t,n,e){"use strict";var r,o=e(51),i=e(14);!function(t){t.REJECTED="rejected",t.RESOLVED="resolved",t.PENDING="pending"}(r||(r={}));var u=function(){function t(t,n){var e=this;this.status=r.PENDING,this.emitter=new o,this.onFulfilled=function(t){e.status===r.PENDING&&(e.status=r.RESOLVED,e.emitter.emit(r.RESOLVED,[t]))},this.onRejected=function(t){e.status===r.PENDING&&(e.status=r.REJECTED,e.emitter.emit(r.REJECTED,[t]))};var i=function(){return t(e.onFulfilled,e.onRejected)};n?i():setTimeout(i,0)}return t.resolve=function(n){return new t((function(t){t(n)}))},t.reject=function(n){return new t((function(t,e){e(n)}))},t.prototype.then=function(n,e){var o=this;return new t((function(u,c){o.emitter.on(r.RESOLVED,(function(e){if(i(n)){var r=n(e);r instanceof t?r.then(u,c):u(r)}else u(e)})),o.emitter.on(r.REJECTED,(function(n){if(i(e)){var r=e(n);r instanceof t?r.then(u,c):u(r)}else c(n)}))}),!0)},t.prototype.catch=function(n){var e=this;return new t((function(o){i(n)&&e.emitter.on(r.REJECTED,(function(e){var r=n(e);r instanceof t?r.then(o):o(r)})),e.emitter.on(r.RESOLVED,o)}),!0)},t}();t.exports=u},4:function(t,n,e){"use strict";var r=e(1),o=e.n(r),i=e(2),u=e.n(i),c=e(0),f=e.n(c),s=function(){function t(){o()(this,t)}return u()(t,null,[{key:"configure",value:function(n){t.config=n}},{key:"error",value:function(t){function n(n,e){return t.apply(this,arguments)}return n.toString=function(){return t.toString()},n}((function(t,n){this.config&&this.config.onError?this.config.onError(t,n):window.console&&console.log(t,n)}))}]),t}();f()(s,"config",void 0),n.a=s},50:function(t,n,e){"use strict";t.exports=function(t){var n=typeof t;return"object"===n&&null!=t||"function"===n}},51:function(t,n,e){"use strict";var r=function(){function t(){this.events={}}return t.prototype.on=function(t,n){if(this.events[t]){if(-1!==(e=this.events[t]).indexOf(n))throw new Error('This handler has already been subcribed for "'+t+'" event');e.push(n)}else{var e;(e=[]).push(n),this.events[t]=e}},t.prototype.off=function(t,n){var e=this.events[t],r=e.indexOf(n);-1!==r&&e.splice(r,1)},t.prototype.emit=function(t,n){void 0===n&&(n=[]);var e=this.events[t];e&&e.map((function(t){n?t.apply(void 0,n):t()}))},t}();t.exports=r},52:function(t,n,e){"use strict";e.d(n,"a",(function(){return i}));var r=e(17),o=e.n(r);function i(t){var n=t.gdprApplies,e=t.consentData;return{gdpr:"boolean"==typeof n?Number(n):void 0,gdpr_consent:o()(e)?e:void 0}}},53:function(t,n,e){"use strict";e.d(n,"a",(function(){return f}));var r=e(30),o=e.n(r),i=e(21),u=e.n(i),c="usprivacy";function f(){var t=o()(c);return u()(t)?t:null}},62:function(t,n,e){"use strict";t.exports=function(t){return null===t}},89:function(t,n,e){"use strict";var r=e(62),o=e(23);t.exports=function(t){var n=Object.keys(t),e=[];return n.forEach((function(n){var i=t[n];r(i)||o(i)||e.push(n+"="+encodeURIComponent(t[n]))})),e.join("&")}}});
+		</script><meta name="application-name" content="A Pondering Mind" /><meta name="msapplication-window" content="width=device-width;height=device-height" /><meta name="msapplication-tooltip" content="A little of this. A little of that." /><meta name="msapplication-task" content="name=Subscribe;action-uri=https://aponderingmind.org/feed/;icon-uri=https://doninmass.files.wordpress.com/2018/07/cropped-p12060314451401.jpg?w=16" /><meta name="msapplication-task" content="name=Sign up for a free blog;action-uri=http://wordpress.com/signup/;icon-uri=https://s0.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com Support;action-uri=http://support.wordpress.com/;icon-uri=https://s0.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com Forums;action-uri=http://forums.wordpress.com/;icon-uri=https://s0.wp.com/i/favicon.ico" /><meta name="description" content="Back Bay section of Boston seen from Cambridge. Click on image to enlarge. Source:" />
+<link rel="amphtml" href="https://aponderingmind.org/2013/04/01/boston-after-dark/amp/"><link rel="icon" href="https://doninmass.files.wordpress.com/2018/07/cropped-p12060314451401.jpg?w=32" sizes="32x32" />
+<link rel="icon" href="https://doninmass.files.wordpress.com/2018/07/cropped-p12060314451401.jpg?w=192" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://doninmass.files.wordpress.com/2018/07/cropped-p12060314451401.jpg?w=180" />
+<meta name="msapplication-TileImage" content="https://doninmass.files.wordpress.com/2018/07/cropped-p12060314451401.jpg?w=270" />
+</head>
+
+<body class="post-template-default single single-post postid-13414 single-format-standard wp-embed-responsive customizer-styles-applied singular image-filters-enabled highlander-enabled highlander-light">
+
+	
+<div id="page" class="site">
+	<a class="skip-link screen-reader-text" href="#content">Skip to content</a>
+
+	
+		<header id="masthead" class="site-header responsive-max-width">
+
+			<div class="site-branding">
+
+								<p class="site-title"><a href="https://aponderingmind.org/" rel="home">A Pondering Mind</a></p>
+			
+				<p class="site-description">
+				A little of this. A little of that.			</p>
+	</div><!-- .site-branding -->
+
+							<nav id="site-navigation" class="main-navigation" aria-label="Main Navigation">
+					<input type="checkbox" role="button" aria-haspopup="true" id="toggle" class="hide-visually">
+					<label for="toggle" id="toggle-menu" class="button">
+						Menu						<span class="dropdown-icon open">+</span>
+						<span class="dropdown-icon close">&times;</span>
+						<span class="hide-visually expanded-text">expanded</span>
+						<span class="hide-visually collapsed-text">collapsed</span>
+					</label>
+					<div class="menu-home-container"><ul id="menu-home" class="main-menu" aria-label="submenu"><li id="menu-item-37537" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-37537"><a href="https://aponderingmind.org/a-note-on-awards/">A Note On Awards</a></li>
+<li id="menu-item-37538" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-37538"><a href="https://aponderingmind.org/about-me/">About</a></li>
+<li id="menu-item-37943" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-37943"><a href="https://aponderingmind.org/contact/">Contact</a></li>
+</ul></div>				</nav><!-- #site-navigation -->
+			
+			
+		</header><!-- #masthead -->
+
+	
+	<div id="content" class="site-content">
+
+	<section id="primary" class="content-area">
+		<main id="main" class="site-main">
+
+			
+<article id="post-13414" class="post-13414 post type-post status-publish format-standard hentry category-photos tag-back-bay tag-boston tag-cambridge tag-harvard-bridge tag-memorial-drive-cambridge tag-night-photography tag-photography tag-photos tag-prudential-tower entry">
+
+	<header class="entry-header responsive-max-width">
+		<h1 class="entry-title">Boston After Dark</h1>				<div class="entry-meta">
+			<span class="byline"><svg class="svg-icon" width="16" height="16" aria-hidden="true" role="img" focusable="false" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path><path d="M0 0h24v24H0z" fill="none"></path></svg><span class="screen-reader-text">Posted by</span><span class="author vcard"><a class="url fn n" href="https://aponderingmind.org/author/doninmass/">A Pondering Mind</a></span></span><span class="posted-on"><svg class="svg-icon" width="16" height="16" aria-hidden="true" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><defs><path id="a" d="M0 0h24v24H0V0z"></path></defs><clipPath id="b"><use xlink:href="#a" overflow="visible"></use></clipPath><path clip-path="url(#b)" d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3z"></path></svg><a href="https://aponderingmind.org/2013/04/01/boston-after-dark/" rel="bookmark"><time class="entry-date published" datetime="2013-04-01T16:39:46-04:00">April 1, 2013</time><time class="updated" datetime="2013-04-01T17:09:52-04:00">April 1, 2013</time></a></span><span class="cat-links"><svg class="svg-icon" width="16" height="16" aria-hidden="true" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"></path><path d="M0 0h24v24H0z" fill="none"></path></svg><span class="screen-reader-text">Posted in</span><a href="https://aponderingmind.org/category/photos/" rel="category tag">Photos</a></span><span class="tags-links"><svg class="svg-icon" width="16" height="16" aria-hidden="true" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"></path><path d="M0 0h24v24H0z" fill="none"></path></svg><span class="screen-reader-text">Tags:</span><a href="https://aponderingmind.org/tag/back-bay/" rel="tag">Back Bay</a>, <a href="https://aponderingmind.org/tag/boston/" rel="tag">Boston</a>, <a href="https://aponderingmind.org/tag/cambridge/" rel="tag">Cambridge</a>, <a href="https://aponderingmind.org/tag/harvard-bridge/" rel="tag">Harvard Bridge</a>, <a href="https://aponderingmind.org/tag/memorial-drive-cambridge/" rel="tag">Memorial Drive Cambridge</a>, <a href="https://aponderingmind.org/tag/night-photography/" rel="tag">Night Photography</a>, <a href="https://aponderingmind.org/tag/photography/" rel="tag">Photography</a>, <a href="https://aponderingmind.org/tag/photos/" rel="tag">Photos</a>, <a href="https://aponderingmind.org/tag/prudential-tower/" rel="tag">Prudential Tower</a></span>		</div><!-- .meta-info -->
+			</header>
+
+	
+	<div class="entry-content">
+		<p>Back Bay section of Boston seen from Cambridge.</p>
+<p>Click on image to enlarge.</p>
+<figure data-shortcode="caption" id="attachment_13415" aria-describedby="caption-attachment-13415" style="width: 808px" class="wp-caption aligncenter"><a href="https://doninmass.files.wordpress.com/2013/04/night-cities-boston-landscapes-images-download-free-backgrounds-wallpapers.jpg"><img data-attachment-id="13415" data-permalink="https://aponderingmind.org/2013/04/01/boston-after-dark/night-cities-boston-landscapes-images-download-free-backgrounds-wallpapers/" data-orig-file="https://doninmass.files.wordpress.com/2013/04/night-cities-boston-landscapes-images-download-free-backgrounds-wallpapers.jpg" data-orig-size="1280,800" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;}" data-image-title="night-cities-boston-landscapes-images-download-free-backgrounds-wallpapers" data-image-description="" data-medium-file="https://doninmass.files.wordpress.com/2013/04/night-cities-boston-landscapes-images-download-free-backgrounds-wallpapers.jpg?w=300" data-large-file="https://doninmass.files.wordpress.com/2013/04/night-cities-boston-landscapes-images-download-free-backgrounds-wallpapers.jpg?w=750" class="size-full wp-image-13415" alt="Boston and the Charles River." src="https://doninmass.files.wordpress.com/2013/04/night-cities-boston-landscapes-images-download-free-backgrounds-wallpapers.jpg?w=750" srcset="https://doninmass.files.wordpress.com/2013/04/night-cities-boston-landscapes-images-download-free-backgrounds-wallpapers.jpg?w=750 750w, https://doninmass.files.wordpress.com/2013/04/night-cities-boston-landscapes-images-download-free-backgrounds-wallpapers.jpg?w=150 150w, https://doninmass.files.wordpress.com/2013/04/night-cities-boston-landscapes-images-download-free-backgrounds-wallpapers.jpg?w=300 300w, https://doninmass.files.wordpress.com/2013/04/night-cities-boston-landscapes-images-download-free-backgrounds-wallpapers.jpg?w=768 768w, https://doninmass.files.wordpress.com/2013/04/night-cities-boston-landscapes-images-download-free-backgrounds-wallpapers.jpg?w=1024 1024w, https://doninmass.files.wordpress.com/2013/04/night-cities-boston-landscapes-images-download-free-backgrounds-wallpapers.jpg 1280w" sizes="(max-width: 750px) 100vw, 750px"   /></a><figcaption id="caption-attachment-13415" class="wp-caption-text"><strong>Boston and the Charles River.</strong></figcaption></figure>
+<p><a href="http://www.downloadfreebackgrounds.net/">Source:</a></p>
+<div id="jp-post-flair" class="sharedaddy sd-like-enabled sd-sharing-enabled"><div class="sharedaddy sd-sharing-enabled"><div class="robots-nocontent sd-block sd-social sd-social-icon sd-sharing"><h3 class="sd-title">Share this:</h3><div class="sd-content"><ul><li class="share-email"><a rel="nofollow noopener noreferrer" data-shared="" class="share-email sd-button share-icon no-text" href="https://aponderingmind.org/2013/04/01/boston-after-dark/?share=email" target="_blank" title="Click to email this to a friend"><span></span><span class="sharing-screen-reader-text">Click to email this to a friend (Opens in new window)</span></a></li><li class="share-pocket"><a rel="nofollow noopener noreferrer" data-shared="" class="share-pocket sd-button share-icon no-text" href="https://aponderingmind.org/2013/04/01/boston-after-dark/?share=pocket" target="_blank" title="Click to share on Pocket"><span></span><span class="sharing-screen-reader-text">Click to share on Pocket (Opens in new window)</span></a></li><li class="share-print"><a rel="nofollow noopener noreferrer" data-shared="" class="share-print sd-button share-icon no-text" href="https://aponderingmind.org/2013/04/01/boston-after-dark/#print" target="_blank" title="Click to print"><span></span><span class="sharing-screen-reader-text">Click to print (Opens in new window)</span></a></li><li class="share-end"></li></ul></div></div></div><div class='sharedaddy sd-block sd-like jetpack-likes-widget-wrapper jetpack-likes-widget-unloaded' id='like-post-wrapper-11283610-13414-5ecaa24f6e896' data-src='//widgets.wp.com/likes/index.html?ver=20190321#blog_id=11283610&amp;post_id=13414&amp;origin=doninmass.wordpress.com&amp;obj_id=11283610-13414-5ecaa24f6e896&amp;domain=aponderingmind.org' data-name='like-post-frame-11283610-13414-5ecaa24f6e896'><h3 class='sd-title'>Like this:</h3><div class='likes-widget-placeholder post-likes-widget-placeholder' style='height: 55px;'><span class='button'><span>Like</span></span> <span class="loading">Loading...</span></div><span class='sd-text-color'></span><a class='sd-link-color'></a></div>
+<div id='jp-relatedposts' class='jp-relatedposts' >
+	<h3 class="jp-relatedposts-headline"><em>Related</em></h3>
+</div></div>	</div><!-- .entry-content -->
+
+	<footer class="entry-footer responsive-max-width">
+		<span class="byline"><svg class="svg-icon" width="16" height="16" aria-hidden="true" role="img" focusable="false" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path><path d="M0 0h24v24H0z" fill="none"></path></svg><span class="screen-reader-text">Posted by</span><span class="author vcard"><a class="url fn n" href="https://aponderingmind.org/author/doninmass/">A Pondering Mind</a></span></span><span class="posted-on"><svg class="svg-icon" width="16" height="16" aria-hidden="true" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><defs><path id="a" d="M0 0h24v24H0V0z"></path></defs><clipPath id="b"><use xlink:href="#a" overflow="visible"></use></clipPath><path clip-path="url(#b)" d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3z"></path></svg><a href="https://aponderingmind.org/2013/04/01/boston-after-dark/" rel="bookmark"><time class="entry-date published" datetime="2013-04-01T16:39:46-04:00">April 1, 2013</time><time class="updated" datetime="2013-04-01T17:09:52-04:00">April 1, 2013</time></a></span><span class="cat-links"><svg class="svg-icon" width="16" height="16" aria-hidden="true" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"></path><path d="M0 0h24v24H0z" fill="none"></path></svg><span class="screen-reader-text">Posted in</span><a href="https://aponderingmind.org/category/photos/" rel="category tag">Photos</a></span><span class="tags-links"><svg class="svg-icon" width="16" height="16" aria-hidden="true" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"></path><path d="M0 0h24v24H0z" fill="none"></path></svg><span class="screen-reader-text">Tags:</span><a href="https://aponderingmind.org/tag/back-bay/" rel="tag">Back Bay</a>, <a href="https://aponderingmind.org/tag/boston/" rel="tag">Boston</a>, <a href="https://aponderingmind.org/tag/cambridge/" rel="tag">Cambridge</a>, <a href="https://aponderingmind.org/tag/harvard-bridge/" rel="tag">Harvard Bridge</a>, <a href="https://aponderingmind.org/tag/memorial-drive-cambridge/" rel="tag">Memorial Drive Cambridge</a>, <a href="https://aponderingmind.org/tag/night-photography/" rel="tag">Night Photography</a>, <a href="https://aponderingmind.org/tag/photography/" rel="tag">Photography</a>, <a href="https://aponderingmind.org/tag/photos/" rel="tag">Photos</a>, <a href="https://aponderingmind.org/tag/prudential-tower/" rel="tag">Prudential Tower</a></span>	</footer><!-- .entry-footer -->
+
+				
+</article><!-- #post-${ID} -->
+
+	<nav class="navigation post-navigation" role="navigation" aria-label="Posts">
+		<h2 class="screen-reader-text">Post navigation</h2>
+		<div class="nav-links"><div class="nav-previous"><a href="https://aponderingmind.org/2013/04/01/dead-man-walking/" rel="prev"><span class="meta-nav" aria-hidden="true">Previous Post</span> <span class="screen-reader-text">Previous post:</span> <br/><span class="post-title">Dead Man Walking</span></a></div><div class="nav-next"><a href="https://aponderingmind.org/2013/04/01/boston-early-evening/" rel="next"><span class="meta-nav" aria-hidden="true">Next Post</span> <span class="screen-reader-text">Next post:</span> <br/><span class="post-title">Boston Early Evening</span></a></div></div>
+	</nav>
+<div id="comments" class="comments-area responsive-max-width">
+
+			<h2 class="comments-title">
+			8 thoughts on &ldquo;<span>Boston After Dark</span>&rdquo;		</h2><!-- .comments-title -->
+
+		
+		<ol class="comment-list">
+					<li id="comment-27435" class="comment byuser comment-author-sharingmemyselfandi even thread-even depth-1 parent highlander-comment">
+			<article id="div-comment-27435" class="comment-body">
+				<footer class="comment-meta">
+					<div class="comment-author vcard">
+						<img alt='' src='https://1.gravatar.com/avatar/459ca24b36317fe252b72d8fb3c0b812?s=32&#038;d=identicon&#038;r=PG' class='avatar avatar-32' height='32' width='32' />						<b class="fn"><a href='http://sharingmemyselfandi.wordpress.com' rel='external nofollow ugc' class='url'>RoSy</a></b> <span class="says">says:</span>					</div><!-- .comment-author -->
+
+					<div class="comment-metadata">
+						<a href="https://aponderingmind.org/2013/04/01/boston-after-dark/#comment-27435">
+							<time datetime="2013-04-01T17:38:59-04:00">
+								April 1, 2013 at 5:38 pm							</time>
+						</a>
+											</div><!-- .comment-metadata -->
+
+									</footer><!-- .comment-meta -->
+
+				<div class="comment-content">
+					<p>Love that city!</p>
+<p id="comment-like-27435" data-liked=comment-not-liked class="comment-likes comment-not-liked"><a href="https://aponderingmind.org/2013/04/01/boston-after-dark/?like_comment=27435&#038;_wpnonce=cc23f241af" class="comment-like-link needs-login" rel="nofollow" data-blog="11283610"><span>Like</span></a><span id="comment-like-count-27435" class="comment-like-feedback">Like</span></p>
+				</div><!-- .comment-content -->
+
+							</article><!-- .comment-body -->
+		<ol class="children">
+		<li id="comment-27436" class="comment byuser comment-author-doninmass bypostauthor odd alt depth-2 highlander-comment">
+			<article id="div-comment-27436" class="comment-body">
+				<footer class="comment-meta">
+					<div class="comment-author vcard">
+						<img alt='' src='https://1.gravatar.com/avatar/7655ec6fe7be8eee4a070d6b2efeccf1?s=32&#038;d=identicon&#038;r=PG' class='avatar avatar-32' height='32' width='32' />						<b class="fn"><a href='https://doninmass.wordpress.com' rel='external nofollow ugc' class='url'>Don in Massachusetts</a></b> <span class="says">says:</span>					</div><!-- .comment-author -->
+
+					<div class="comment-metadata">
+						<a href="https://aponderingmind.org/2013/04/01/boston-after-dark/#comment-27436">
+							<time datetime="2013-04-01T18:01:23-04:00">
+								April 1, 2013 at 6:01 pm							</time>
+						</a>
+											</div><!-- .comment-metadata -->
+
+									</footer><!-- .comment-meta -->
+
+				<div class="comment-content">
+					<p>Its a great city to spend some time in&#8230;</p>
+<p id="comment-like-27436" data-liked=comment-not-liked class="comment-likes comment-not-liked"><a href="https://aponderingmind.org/2013/04/01/boston-after-dark/?like_comment=27436&#038;_wpnonce=24ba82a669" class="comment-like-link needs-login" rel="nofollow" data-blog="11283610"><span>Like</span></a><span id="comment-like-count-27436" class="comment-like-feedback">Like</span></p>
+				</div><!-- .comment-content -->
+
+							</article><!-- .comment-body -->
+		</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+		<li id="comment-27438" class="comment byuser comment-author-ladylovelyblogger even thread-odd thread-alt depth-1 parent highlander-comment">
+			<article id="div-comment-27438" class="comment-body">
+				<footer class="comment-meta">
+					<div class="comment-author vcard">
+						<img alt='' src='https://0.gravatar.com/avatar/c1fd808f5aab704e63d5c3921e392c6d?s=32&#038;d=identicon&#038;r=PG' class='avatar avatar-32' height='32' width='32' />						<b class="fn"><a href='http://ladylovelyblogger.wordpress.com' rel='external nofollow ugc' class='url'>Lady Lovely</a></b> <span class="says">says:</span>					</div><!-- .comment-author -->
+
+					<div class="comment-metadata">
+						<a href="https://aponderingmind.org/2013/04/01/boston-after-dark/#comment-27438">
+							<time datetime="2013-04-01T19:40:56-04:00">
+								April 1, 2013 at 7:40 pm							</time>
+						</a>
+											</div><!-- .comment-metadata -->
+
+									</footer><!-- .comment-meta -->
+
+				<div class="comment-content">
+					<p>This makes me want to visit so much!</p>
+<p id="comment-like-27438" data-liked=comment-not-liked class="comment-likes comment-not-liked"><a href="https://aponderingmind.org/2013/04/01/boston-after-dark/?like_comment=27438&#038;_wpnonce=012742cf68" class="comment-like-link needs-login" rel="nofollow" data-blog="11283610"><span>Like</span></a><span id="comment-like-count-27438" class="comment-like-feedback">Like</span></p>
+				</div><!-- .comment-content -->
+
+							</article><!-- .comment-body -->
+		<ol class="children">
+		<li id="comment-27448" class="comment byuser comment-author-doninmass bypostauthor odd alt depth-2 parent highlander-comment">
+			<article id="div-comment-27448" class="comment-body">
+				<footer class="comment-meta">
+					<div class="comment-author vcard">
+						<img alt='' src='https://1.gravatar.com/avatar/7655ec6fe7be8eee4a070d6b2efeccf1?s=32&#038;d=identicon&#038;r=PG' class='avatar avatar-32' height='32' width='32' />						<b class="fn"><a href='https://doninmass.wordpress.com' rel='external nofollow ugc' class='url'>Don in Massachusetts</a></b> <span class="says">says:</span>					</div><!-- .comment-author -->
+
+					<div class="comment-metadata">
+						<a href="https://aponderingmind.org/2013/04/01/boston-after-dark/#comment-27448">
+							<time datetime="2013-04-02T07:53:51-04:00">
+								April 2, 2013 at 7:53 am							</time>
+						</a>
+											</div><!-- .comment-metadata -->
+
+									</footer><!-- .comment-meta -->
+
+				<div class="comment-content">
+					<p>You should, and you would love it&#8230;</p>
+<p id="comment-like-27448" data-liked=comment-not-liked class="comment-likes comment-not-liked"><a href="https://aponderingmind.org/2013/04/01/boston-after-dark/?like_comment=27448&#038;_wpnonce=2737494981" class="comment-like-link needs-login" rel="nofollow" data-blog="11283610"><span>Like</span></a><span id="comment-like-count-27448" class="comment-like-feedback">Like</span></p>
+				</div><!-- .comment-content -->
+
+							</article><!-- .comment-body -->
+		<ol class="children">
+		<li id="comment-27459" class="comment byuser comment-author-ladylovelyblogger even depth-3 parent highlander-comment">
+			<article id="div-comment-27459" class="comment-body">
+				<footer class="comment-meta">
+					<div class="comment-author vcard">
+						<img alt='' src='https://0.gravatar.com/avatar/c1fd808f5aab704e63d5c3921e392c6d?s=32&#038;d=identicon&#038;r=PG' class='avatar avatar-32' height='32' width='32' />						<b class="fn"><a href='http://ladylovelyblogger.wordpress.com' rel='external nofollow ugc' class='url'>Lady Lovely</a></b> <span class="says">says:</span>					</div><!-- .comment-author -->
+
+					<div class="comment-metadata">
+						<a href="https://aponderingmind.org/2013/04/01/boston-after-dark/#comment-27459">
+							<time datetime="2013-04-02T13:55:40-04:00">
+								April 2, 2013 at 1:55 pm							</time>
+						</a>
+											</div><!-- .comment-metadata -->
+
+									</footer><!-- .comment-meta -->
+
+				<div class="comment-content">
+					<p>I&#8217;ll add it my list of places to visit when I find a job 🙂</p>
+<p id="comment-like-27459" data-liked=comment-not-liked class="comment-likes comment-not-liked"><a href="https://aponderingmind.org/2013/04/01/boston-after-dark/?like_comment=27459&#038;_wpnonce=254435194b" class="comment-like-link needs-login" rel="nofollow" data-blog="11283610"><span>Like</span></a><span id="comment-like-count-27459" class="comment-like-feedback">Like</span></p>
+				</div><!-- .comment-content -->
+
+							</article><!-- .comment-body -->
+		<ol class="children">
+		<li id="comment-27460" class="comment byuser comment-author-doninmass bypostauthor odd alt depth-4 highlander-comment">
+			<article id="div-comment-27460" class="comment-body">
+				<footer class="comment-meta">
+					<div class="comment-author vcard">
+						<img alt='' src='https://1.gravatar.com/avatar/7655ec6fe7be8eee4a070d6b2efeccf1?s=32&#038;d=identicon&#038;r=PG' class='avatar avatar-32' height='32' width='32' />						<b class="fn"><a href='https://doninmass.wordpress.com' rel='external nofollow ugc' class='url'>Don in Massachusetts</a></b> <span class="says">says:</span>					</div><!-- .comment-author -->
+
+					<div class="comment-metadata">
+						<a href="https://aponderingmind.org/2013/04/01/boston-after-dark/#comment-27460">
+							<time datetime="2013-04-02T14:35:12-04:00">
+								April 2, 2013 at 2:35 pm							</time>
+						</a>
+											</div><!-- .comment-metadata -->
+
+									</footer><!-- .comment-meta -->
+
+				<div class="comment-content">
+					<p>I hope it all does happen&#8230; 🙂</p>
+<p id="comment-like-27460" data-liked=comment-not-liked class="comment-likes comment-not-liked"><a href="https://aponderingmind.org/2013/04/01/boston-after-dark/?like_comment=27460&#038;_wpnonce=7cae08c711" class="comment-like-link needs-login" rel="nofollow" data-blog="11283610"><span>Like</span></a><span id="comment-like-count-27460" class="comment-like-feedback">Like</span></p>
+				</div><!-- .comment-content -->
+
+							</article><!-- .comment-body -->
+		</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+		<li id="comment-27467" class="comment byuser comment-author-cherylfoston even thread-even depth-1 parent highlander-comment">
+			<article id="div-comment-27467" class="comment-body">
+				<footer class="comment-meta">
+					<div class="comment-author vcard">
+						<img alt='' src='https://2.gravatar.com/avatar/e721aa6685bf435b7ff2b654909a5b32?s=32&#038;d=identicon&#038;r=PG' class='avatar avatar-32' height='32' width='32' />						<b class="fn"><a href='http://whatcherylsaid.wordpress.com' rel='external nofollow ugc' class='url'>cherylfoston</a></b> <span class="says">says:</span>					</div><!-- .comment-author -->
+
+					<div class="comment-metadata">
+						<a href="https://aponderingmind.org/2013/04/01/boston-after-dark/#comment-27467">
+							<time datetime="2013-04-02T23:40:47-04:00">
+								April 2, 2013 at 11:40 pm							</time>
+						</a>
+											</div><!-- .comment-metadata -->
+
+									</footer><!-- .comment-meta -->
+
+				<div class="comment-content">
+					<p>Blowing my mind here Don! Totally Awesome!</p>
+<p id="comment-like-27467" data-liked=comment-not-liked class="comment-likes comment-not-liked"><a href="https://aponderingmind.org/2013/04/01/boston-after-dark/?like_comment=27467&#038;_wpnonce=8eb1df7660" class="comment-like-link needs-login" rel="nofollow" data-blog="11283610"><span>Like</span></a><span id="comment-like-count-27467" class="comment-like-feedback">Like</span></p>
+				</div><!-- .comment-content -->
+
+							</article><!-- .comment-body -->
+		<ol class="children">
+		<li id="comment-27478" class="comment byuser comment-author-doninmass bypostauthor odd alt depth-2 highlander-comment">
+			<article id="div-comment-27478" class="comment-body">
+				<footer class="comment-meta">
+					<div class="comment-author vcard">
+						<img alt='' src='https://1.gravatar.com/avatar/7655ec6fe7be8eee4a070d6b2efeccf1?s=32&#038;d=identicon&#038;r=PG' class='avatar avatar-32' height='32' width='32' />						<b class="fn"><a href='https://doninmass.wordpress.com' rel='external nofollow ugc' class='url'>Don in Massachusetts</a></b> <span class="says">says:</span>					</div><!-- .comment-author -->
+
+					<div class="comment-metadata">
+						<a href="https://aponderingmind.org/2013/04/01/boston-after-dark/#comment-27478">
+							<time datetime="2013-04-03T15:45:57-04:00">
+								April 3, 2013 at 3:45 pm							</time>
+						</a>
+											</div><!-- .comment-metadata -->
+
+									</footer><!-- .comment-meta -->
+
+				<div class="comment-content">
+					<p>Thank you for the nice comment..</p>
+<p id="comment-like-27478" data-liked=comment-not-liked class="comment-likes comment-not-liked"><a href="https://aponderingmind.org/2013/04/01/boston-after-dark/?like_comment=27478&#038;_wpnonce=bd5b088882" class="comment-like-link needs-login" rel="nofollow" data-blog="11283610"><span>Like</span></a><span id="comment-like-count-27478" class="comment-like-feedback">Like</span></p>
+				</div><!-- .comment-content -->
+
+							</article><!-- .comment-body -->
+		</li><!-- #comment-## -->
+</ol><!-- .children -->
+</li><!-- #comment-## -->
+		</ol><!-- .comment-list -->
+
+					<p class="no-comments">Comments are closed.</p>
+			
+</div><!-- #comments -->
+
+		</main><!-- #main -->
+	</section><!-- #primary -->
+
+
+	</div><!-- #content -->
+
+		<footer id="colophon" class="site-footer responsive-max-width">
+	
+	<aside class="widget-area responsive-max-width" role="complementary" aria-label="Footer">
+		<section id="search-4" class="widget widget_search"><form role="search" method="get" class="search-form" action="https://aponderingmind.org/">
+				<label>
+					<span class="screen-reader-text">Search for:</span>
+					<input type="search" class="search-field" placeholder="Search &hellip;" value="" name="s" />
+				</label>
+				<input type="submit" class="search-submit" value="Search" />
+			</form></section><section id="calendar-2" class="widget widget_calendar"><div id="calendar_wrap" class="calendar_wrap"><table id="wp-calendar" class="wp-calendar-table">
+	<caption>April 2013</caption>
+	<thead>
+	<tr>
+		<th scope="col" title="Sunday">S</th>
+		<th scope="col" title="Monday">M</th>
+		<th scope="col" title="Tuesday">T</th>
+		<th scope="col" title="Wednesday">W</th>
+		<th scope="col" title="Thursday">T</th>
+		<th scope="col" title="Friday">F</th>
+		<th scope="col" title="Saturday">S</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td colspan="1" class="pad">&nbsp;</td><td><a href="https://aponderingmind.org/2013/04/01/" aria-label="Posts published on April 1, 2013">1</a></td><td><a href="https://aponderingmind.org/2013/04/02/" aria-label="Posts published on April 2, 2013">2</a></td><td><a href="https://aponderingmind.org/2013/04/03/" aria-label="Posts published on April 3, 2013">3</a></td><td><a href="https://aponderingmind.org/2013/04/04/" aria-label="Posts published on April 4, 2013">4</a></td><td>5</td><td><a href="https://aponderingmind.org/2013/04/06/" aria-label="Posts published on April 6, 2013">6</a></td>
+	</tr>
+	<tr>
+		<td><a href="https://aponderingmind.org/2013/04/07/" aria-label="Posts published on April 7, 2013">7</a></td><td><a href="https://aponderingmind.org/2013/04/08/" aria-label="Posts published on April 8, 2013">8</a></td><td><a href="https://aponderingmind.org/2013/04/09/" aria-label="Posts published on April 9, 2013">9</a></td><td><a href="https://aponderingmind.org/2013/04/10/" aria-label="Posts published on April 10, 2013">10</a></td><td><a href="https://aponderingmind.org/2013/04/11/" aria-label="Posts published on April 11, 2013">11</a></td><td><a href="https://aponderingmind.org/2013/04/12/" aria-label="Posts published on April 12, 2013">12</a></td><td><a href="https://aponderingmind.org/2013/04/13/" aria-label="Posts published on April 13, 2013">13</a></td>
+	</tr>
+	<tr>
+		<td><a href="https://aponderingmind.org/2013/04/14/" aria-label="Posts published on April 14, 2013">14</a></td><td><a href="https://aponderingmind.org/2013/04/15/" aria-label="Posts published on April 15, 2013">15</a></td><td><a href="https://aponderingmind.org/2013/04/16/" aria-label="Posts published on April 16, 2013">16</a></td><td><a href="https://aponderingmind.org/2013/04/17/" aria-label="Posts published on April 17, 2013">17</a></td><td><a href="https://aponderingmind.org/2013/04/18/" aria-label="Posts published on April 18, 2013">18</a></td><td><a href="https://aponderingmind.org/2013/04/19/" aria-label="Posts published on April 19, 2013">19</a></td><td>20</td>
+	</tr>
+	<tr>
+		<td><a href="https://aponderingmind.org/2013/04/21/" aria-label="Posts published on April 21, 2013">21</a></td><td><a href="https://aponderingmind.org/2013/04/22/" aria-label="Posts published on April 22, 2013">22</a></td><td>23</td><td><a href="https://aponderingmind.org/2013/04/24/" aria-label="Posts published on April 24, 2013">24</a></td><td><a href="https://aponderingmind.org/2013/04/25/" aria-label="Posts published on April 25, 2013">25</a></td><td><a href="https://aponderingmind.org/2013/04/26/" aria-label="Posts published on April 26, 2013">26</a></td><td><a href="https://aponderingmind.org/2013/04/27/" aria-label="Posts published on April 27, 2013">27</a></td>
+	</tr>
+	<tr>
+		<td><a href="https://aponderingmind.org/2013/04/28/" aria-label="Posts published on April 28, 2013">28</a></td><td><a href="https://aponderingmind.org/2013/04/29/" aria-label="Posts published on April 29, 2013">29</a></td><td><a href="https://aponderingmind.org/2013/04/30/" aria-label="Posts published on April 30, 2013">30</a></td>
+		<td class="pad" colspan="4">&nbsp;</td>
+	</tr>
+	</tbody>
+	</table><nav aria-label="Previous and next months" class="wp-calendar-nav">
+		<span class="wp-calendar-nav-prev"><a href="https://aponderingmind.org/2013/03/">&laquo; Mar</a></span>
+		<span class="pad">&nbsp;</span>
+		<span class="wp-calendar-nav-next"><a href="https://aponderingmind.org/2013/05/">May &raquo;</a></span>
+	</nav></div></section><section id="follow_button_widget-2" class="widget widget_follow_button_widget">
+		<a class="wordpress-follow-button" href="https://aponderingmind.org" data-blog="11283610" data-lang="en" >Follow A Pondering Mind on WordPress.com</a>
+		<script type="text/javascript">(function(d){var f = d.getElementsByTagName('SCRIPT')[0], p = d.createElement('SCRIPT');p.type = 'text/javascript';p.async = true;p.src = '//widgets.wp.com/platform.js';f.parentNode.insertBefore(p,f);}(document));</script>
+
+		</section><section id="google_translate_widget-3" class="widget widget_google_translate_widget"><h2 class="widget-title">Translate This Blog</h2><div id="google_translate_element"></div></section><section id="top-posts-4" class="widget widget_top-posts"><h2 class="widget-title">Top Posts &amp; Pages</h2><ul>				<li>
+					<a href="https://aponderingmind.org/2020/05/22/we-can-complain-because-rose-bushes-have-thorns-or-rejoice-because-thorn-bushes-have-roses-abraham-lincoln/" class="bump-view" data-bump-view="tp">&quot;We can complain because rose bushes have thorns, or rejoice because thorn bushes have roses.&quot; ~Abraham Lincoln</a>					</li>
+								<li>
+					<a href="https://aponderingmind.org/2020/05/20/how-can-great-minds-be-produced-in-a-country-where-the-test-of-great-minds-is-agreeing-in-the-opinion-of-small-minds-john-stuart-mill/" class="bump-view" data-bump-view="tp">&quot;How can great minds be produced in a country where the test of great minds is agreeing in the opinion of small minds?&quot; ~ John Stuart Mill</a>					</li>
+								<li>
+					<a href="https://aponderingmind.org/2020/05/20/the-pure-and-simple-truth-is-rarely-pure-and-never-simple-oscar-wilde/" class="bump-view" data-bump-view="tp">The pure and simple truth is rarely pure and never simple. ~ Oscar Wilde</a>					</li>
+								<li>
+					<a href="https://aponderingmind.org/2020/05/17/politicians-and-diapers-must-be-changed-often-and-for-the-same-reason-mark-twain/" class="bump-view" data-bump-view="tp">&quot;Politicians and diapers must be changed often, and for the same reason.&quot; ~ Mark Twain</a>					</li>
+								<li>
+					<a href="https://aponderingmind.org/2020/05/15/i-may-not-have-been-sure-about-what-really-did-interest-me-but-i-was-absolutely-sure-abut-what-didnt-albert-camus/" class="bump-view" data-bump-view="tp">I may not have been sure about what really did interest me, but I was absolutely sure about what didn&#039;t. ~ Albert Camus</a>					</li>
+								<li>
+					<a href="https://aponderingmind.org/2020/05/16/noble-and-beautiful-2/" class="bump-view" data-bump-view="tp">Noble And Beautiful</a>					</li>
+								<li>
+					<a href="https://aponderingmind.org/2018/07/13/hubert-reeves-quote/" class="bump-view" data-bump-view="tp">Hubert Reeves Quote</a>					</li>
+								<li>
+					<a href="https://aponderingmind.org/2020/05/15/not-to-be-absolutely-certain-is-i-think-one-of-the-essential-things-in-rationality-bertrand-russell/" class="bump-view" data-bump-view="tp">Not to be absolutely certain is, I think, one of the essential things in rationality. ~ Bertrand Russell</a>					</li>
+								<li>
+					<a href="https://aponderingmind.org/2020/05/13/the-human-spirit/" class="bump-view" data-bump-view="tp">The Human Spirit</a>					</li>
+								<li>
+					<a href="https://aponderingmind.org/2013/06/04/beautiful-beach-sunset/" class="bump-view" data-bump-view="tp">Beautiful Beach Sunset</a>					</li>
+				</ul></section><section id="wp_tag_cloud-3" class="widget wp_widget_tag_cloud"><h2 class="widget-title">Tags</h2><div style="overflow:hidden"><a href="https://aponderingmind.org/tag/actor/" class="tag-cloud-link tag-link-28776 tag-link-position-1" style="font-size: 10.526829268293pt;" aria-label="Actor (53 items)">Actor</a>
+<a href="https://aponderingmind.org/tag/actress/" class="tag-cloud-link tag-link-28969 tag-link-position-2" style="font-size: 9.0243902439024pt;" aria-label="Actress (31 items)">Actress</a>
+<a href="https://aponderingmind.org/tag/age/" class="tag-cloud-link tag-link-57132 tag-link-position-3" style="font-size: 8.6146341463415pt;" aria-label="Age (27 items)">Age</a>
+<a href="https://aponderingmind.org/tag/albert-camus/" class="tag-cloud-link tag-link-340065 tag-link-position-4" style="font-size: 9.5024390243902pt;" aria-label="Albert Camus (37 items)">Albert Camus</a>
+<a href="https://aponderingmind.org/tag/albert-einstein/" class="tag-cloud-link tag-link-193933 tag-link-position-5" style="font-size: 10.458536585366pt;" aria-label="Albert Einstein (52 items)">Albert Einstein</a>
+<a href="https://aponderingmind.org/tag/art/" class="tag-cloud-link tag-link-177 tag-link-position-6" style="font-size: 11.346341463415pt;" aria-label="Art (69 items)">Art</a>
+<a href="https://aponderingmind.org/tag/autumn/" class="tag-cloud-link tag-link-2865 tag-link-position-7" style="font-size: 9.0926829268293pt;" aria-label="autumn (32 items)">autumn</a>
+<a href="https://aponderingmind.org/tag/beauty/" class="tag-cloud-link tag-link-1885 tag-link-position-8" style="font-size: 14.624390243902pt;" aria-label="Beauty (212 items)">Beauty</a>
+<a href="https://aponderingmind.org/tag/bertrand-russell/" class="tag-cloud-link tag-link-138303 tag-link-position-9" style="font-size: 8.6146341463415pt;" aria-label="Bertrand Russell (27 items)">Bertrand Russell</a>
+<a href="https://aponderingmind.org/tag/birds/" class="tag-cloud-link tag-link-36845 tag-link-position-10" style="font-size: 9.4341463414634pt;" aria-label="Birds (36 items)">Birds</a>
+<a href="https://aponderingmind.org/tag/black-white-photography/" class="tag-cloud-link tag-link-217668 tag-link-position-11" style="font-size: 14.351219512195pt;" aria-label="Black &amp; White Photography (194 items)">Black &amp; White Photography</a>
+<a href="https://aponderingmind.org/tag/black-and-white-photos/" class="tag-cloud-link tag-link-803756 tag-link-position-12" style="font-size: 14.556097560976pt;" aria-label="Black and White Photos (209 items)">Black and White Photos</a>
+<a href="https://aponderingmind.org/tag/books/" class="tag-cloud-link tag-link-178 tag-link-position-13" style="font-size: 13.463414634146pt;" aria-label="books (142 items)">books</a>
+<a href="https://aponderingmind.org/tag/buddha/" class="tag-cloud-link tag-link-16275 tag-link-position-14" style="font-size: 11.551219512195pt;" aria-label="Buddha (74 items)">Buddha</a>
+<a href="https://aponderingmind.org/tag/buddha-quotes/" class="tag-cloud-link tag-link-511210 tag-link-position-15" style="font-size: 8.1365853658537pt;" aria-label="Buddha Quotes (23 items)">Buddha Quotes</a>
+<a href="https://aponderingmind.org/tag/buddhism/" class="tag-cloud-link tag-link-158 tag-link-position-16" style="font-size: 12.370731707317pt;" aria-label="Buddhism (98 items)">Buddhism</a>
+<a href="https://aponderingmind.org/tag/buddhist-quotes/" class="tag-cloud-link tag-link-1538874 tag-link-position-17" style="font-size: 8.1365853658537pt;" aria-label="Buddhist Quotes (23 items)">Buddhist Quotes</a>
+<a href="https://aponderingmind.org/tag/cartoons/" class="tag-cloud-link tag-link-7375 tag-link-position-18" style="font-size: 10.117073170732pt;" aria-label="Cartoons (46 items)">Cartoons</a>
+<a href="https://aponderingmind.org/tag/change/" class="tag-cloud-link tag-link-14526 tag-link-position-19" style="font-size: 10.59512195122pt;" aria-label="Change (54 items)">Change</a>
+<a href="https://aponderingmind.org/tag/children/" class="tag-cloud-link tag-link-1343 tag-link-position-20" style="font-size: 8pt;" aria-label="Children (22 items)">Children</a>
+<a href="https://aponderingmind.org/tag/clouds/" class="tag-cloud-link tag-link-14312 tag-link-position-21" style="font-size: 9.980487804878pt;" aria-label="Clouds (44 items)">Clouds</a>
+<a href="https://aponderingmind.org/tag/coffee/" class="tag-cloud-link tag-link-16166 tag-link-position-22" style="font-size: 12.370731707317pt;" aria-label="Coffee (99 items)">Coffee</a>
+<a href="https://aponderingmind.org/tag/dalai-lama/" class="tag-cloud-link tag-link-25018 tag-link-position-23" style="font-size: 8.3414634146341pt;" aria-label="Dalai Lama (25 items)">Dalai Lama</a>
+<a href="https://aponderingmind.org/tag/death/" class="tag-cloud-link tag-link-8437 tag-link-position-24" style="font-size: 8.4780487804878pt;" aria-label="Death (26 items)">Death</a>
+<a href="https://aponderingmind.org/tag/dogs/" class="tag-cloud-link tag-link-305 tag-link-position-25" style="font-size: 8.1365853658537pt;" aria-label="Dogs (23 items)">Dogs</a>
+<a href="https://aponderingmind.org/tag/dreams/" class="tag-cloud-link tag-link-1547 tag-link-position-26" style="font-size: 8.3414634146341pt;" aria-label="Dreams (25 items)">Dreams</a>
+<a href="https://aponderingmind.org/tag/earth/" class="tag-cloud-link tag-link-434 tag-link-position-27" style="font-size: 10.321951219512pt;" aria-label="Earth (49 items)">Earth</a>
+<a href="https://aponderingmind.org/tag/edgar-allan-poe/" class="tag-cloud-link tag-link-150497 tag-link-position-28" style="font-size: 8.1365853658537pt;" aria-label="Edgar Allan Poe (23 items)">Edgar Allan Poe</a>
+<a href="https://aponderingmind.org/tag/education/" class="tag-cloud-link tag-link-1342 tag-link-position-29" style="font-size: 8.819512195122pt;" aria-label="Education (29 items)">Education</a>
+<a href="https://aponderingmind.org/tag/evil/" class="tag-cloud-link tag-link-7897 tag-link-position-30" style="font-size: 8pt;" aria-label="Evil (22 items)">Evil</a>
+<a href="https://aponderingmind.org/tag/facts/" class="tag-cloud-link tag-link-165 tag-link-position-31" style="font-size: 10.321951219512pt;" aria-label="Facts (49 items)">Facts</a>
+<a href="https://aponderingmind.org/tag/fear/" class="tag-cloud-link tag-link-32976 tag-link-position-32" style="font-size: 9.0926829268293pt;" aria-label="Fear (32 items)">Fear</a>
+<a href="https://aponderingmind.org/tag/fiction/" class="tag-cloud-link tag-link-1747 tag-link-position-33" style="font-size: 13.736585365854pt;" aria-label="Fiction (159 items)">Fiction</a>
+<a href="https://aponderingmind.org/tag/fiction-writing/" class="tag-cloud-link tag-link-9255 tag-link-position-34" style="font-size: 12.780487804878pt;" aria-label="Fiction Writing (113 items)">Fiction Writing</a>
+<a href="https://aponderingmind.org/tag/food/" class="tag-cloud-link tag-link-586 tag-link-position-35" style="font-size: 8.3414634146341pt;" aria-label="Food (25 items)">Food</a>
+<a href="https://aponderingmind.org/tag/freedom/" class="tag-cloud-link tag-link-5648 tag-link-position-36" style="font-size: 8pt;" aria-label="Freedom (22 items)">Freedom</a>
+<a href="https://aponderingmind.org/tag/friends/" class="tag-cloud-link tag-link-677 tag-link-position-37" style="font-size: 9.0243902439024pt;" aria-label="Friends (31 items)">Friends</a>
+<a href="https://aponderingmind.org/tag/funny/" class="tag-cloud-link tag-link-684 tag-link-position-38" style="font-size: 13.80487804878pt;" aria-label="Funny (161 items)">Funny</a>
+<a href="https://aponderingmind.org/tag/future/" class="tag-cloud-link tag-link-2850 tag-link-position-39" style="font-size: 9.3658536585366pt;" aria-label="Future (35 items)">Future</a>
+<a href="https://aponderingmind.org/tag/happiness/" class="tag-cloud-link tag-link-22297 tag-link-position-40" style="font-size: 10.731707317073pt;" aria-label="happiness (57 items)">happiness</a>
+<a href="https://aponderingmind.org/tag/happy/" class="tag-cloud-link tag-link-511 tag-link-position-41" style="font-size: 8.1365853658537pt;" aria-label="happy (23 items)">happy</a>
+<a href="https://aponderingmind.org/tag/hell/" class="tag-cloud-link tag-link-23940 tag-link-position-42" style="font-size: 8.3414634146341pt;" aria-label="Hell (25 items)">Hell</a>
+<a href="https://aponderingmind.org/tag/henry-david-thoreau/" class="tag-cloud-link tag-link-257511 tag-link-position-43" style="font-size: 8.1365853658537pt;" aria-label="Henry David Thoreau (23 items)">Henry David Thoreau</a>
+<a href="https://aponderingmind.org/tag/humor/" class="tag-cloud-link tag-link-376 tag-link-position-44" style="font-size: 15.990243902439pt;" aria-label="Humor (337 items)">Humor</a>
+<a href="https://aponderingmind.org/tag/imagination/" class="tag-cloud-link tag-link-10906 tag-link-position-45" style="font-size: 8pt;" aria-label="Imagination (22 items)">Imagination</a>
+<a href="https://aponderingmind.org/tag/inspiration/" class="tag-cloud-link tag-link-107 tag-link-position-46" style="font-size: 11.00487804878pt;" aria-label="Inspiration (62 items)">Inspiration</a>
+<a href="https://aponderingmind.org/tag/inspirational-quotes/" class="tag-cloud-link tag-link-95637 tag-link-position-47" style="font-size: 10.526829268293pt;" aria-label="Inspirational Quotes (53 items)">Inspirational Quotes</a>
+<a href="https://aponderingmind.org/tag/jack-kerouac/" class="tag-cloud-link tag-link-75653 tag-link-position-48" style="font-size: 9.5707317073171pt;" aria-label="Jack Kerouac (38 items)">Jack Kerouac</a>
+<a href="https://aponderingmind.org/tag/john-lennon/" class="tag-cloud-link tag-link-4548 tag-link-position-49" style="font-size: 10.117073170732pt;" aria-label="John Lennon (46 items)">John Lennon</a>
+<a href="https://aponderingmind.org/tag/knowledge/" class="tag-cloud-link tag-link-3324 tag-link-position-50" style="font-size: 12.09756097561pt;" aria-label="Knowledge (90 items)">Knowledge</a>
+<a href="https://aponderingmind.org/tag/lao-tzu/" class="tag-cloud-link tag-link-337364 tag-link-position-51" style="font-size: 8.2731707317073pt;" aria-label="Lao Tzu (24 items)">Lao Tzu</a>
+<a href="https://aponderingmind.org/tag/life/" class="tag-cloud-link tag-link-124 tag-link-position-52" style="font-size: 15.170731707317pt;" aria-label="life (258 items)">life</a>
+<a href="https://aponderingmind.org/tag/live/" class="tag-cloud-link tag-link-12071 tag-link-position-53" style="font-size: 8.8878048780488pt;" aria-label="Live (30 items)">Live</a>
+<a href="https://aponderingmind.org/tag/love/" class="tag-cloud-link tag-link-3785 tag-link-position-54" style="font-size: 11.756097560976pt;" aria-label="Love (80 items)">Love</a>
+<a href="https://aponderingmind.org/tag/man/" class="tag-cloud-link tag-link-49381 tag-link-position-55" style="font-size: 10.59512195122pt;" aria-label="Man (54 items)">Man</a>
+<a href="https://aponderingmind.org/tag/mark-twain/" class="tag-cloud-link tag-link-67606 tag-link-position-56" style="font-size: 8.6146341463415pt;" aria-label="Mark Twain (27 items)">Mark Twain</a>
+<a href="https://aponderingmind.org/tag/men/" class="tag-cloud-link tag-link-4092 tag-link-position-57" style="font-size: 8.3414634146341pt;" aria-label="men (25 items)">men</a>
+<a href="https://aponderingmind.org/tag/mind/" class="tag-cloud-link tag-link-1095 tag-link-position-58" style="font-size: 11.756097560976pt;" aria-label="Mind (81 items)">Mind</a>
+<a href="https://aponderingmind.org/tag/money/" class="tag-cloud-link tag-link-1417 tag-link-position-59" style="font-size: 9.0926829268293pt;" aria-label="money (32 items)">money</a>
+<a href="https://aponderingmind.org/tag/monochrome-photos/" class="tag-cloud-link tag-link-25066433 tag-link-position-60" style="font-size: 8pt;" aria-label="Monochrome Photos (22 items)">Monochrome Photos</a>
+<a href="https://aponderingmind.org/tag/moon/" class="tag-cloud-link tag-link-4701 tag-link-position-61" style="font-size: 8.819512195122pt;" aria-label="Moon (29 items)">Moon</a>
+<a href="https://aponderingmind.org/tag/morning/" class="tag-cloud-link tag-link-48510 tag-link-position-62" style="font-size: 8.1365853658537pt;" aria-label="Morning (23 items)">Morning</a>
+<a href="https://aponderingmind.org/tag/mountains/" class="tag-cloud-link tag-link-8123 tag-link-position-63" style="font-size: 8.819512195122pt;" aria-label="Mountains (29 items)">Mountains</a>
+<a href="https://aponderingmind.org/tag/movies/" class="tag-cloud-link tag-link-190 tag-link-position-64" style="font-size: 8.6146341463415pt;" aria-label="Movies (27 items)">Movies</a>
+<a href="https://aponderingmind.org/tag/music/" class="tag-cloud-link tag-link-18 tag-link-position-65" style="font-size: 14.009756097561pt;" aria-label="Music (173 items)">Music</a>
+<a href="https://aponderingmind.org/tag/musings/" class="tag-cloud-link tag-link-2007 tag-link-position-66" style="font-size: 12.917073170732pt;" aria-label="Musings (119 items)">Musings</a>
+<a href="https://aponderingmind.org/tag/nasa/" class="tag-cloud-link tag-link-1836 tag-link-position-67" style="font-size: 9.2292682926829pt;" aria-label="NASA (34 items)">NASA</a>
+<a href="https://aponderingmind.org/tag/nature/" class="tag-cloud-link tag-link-1099 tag-link-position-68" style="font-size: 10.048780487805pt;" aria-label="nature (45 items)">nature</a>
+<a href="https://aponderingmind.org/tag/new-york-city/" class="tag-cloud-link tag-link-15427 tag-link-position-69" style="font-size: 9.5707317073171pt;" aria-label="New York City (38 items)">New York City</a>
+<a href="https://aponderingmind.org/tag/night/" class="tag-cloud-link tag-link-2208 tag-link-position-70" style="font-size: 8pt;" aria-label="Night (22 items)">Night</a>
+<a href="https://aponderingmind.org/tag/night-photography/" class="tag-cloud-link tag-link-57861 tag-link-position-71" style="font-size: 10.868292682927pt;" aria-label="Night Photography (59 items)">Night Photography</a>
+<a href="https://aponderingmind.org/tag/past/" class="tag-cloud-link tag-link-2848 tag-link-position-72" style="font-size: 8.2731707317073pt;" aria-label="Past (24 items)">Past</a>
+<a href="https://aponderingmind.org/tag/peace/" class="tag-cloud-link tag-link-2128 tag-link-position-73" style="font-size: 9.0243902439024pt;" aria-label="Peace (31 items)">Peace</a>
+<a href="https://aponderingmind.org/tag/people/" class="tag-cloud-link tag-link-660 tag-link-position-74" style="font-size: 15.443902439024pt;" aria-label="people (279 items)">people</a>
+<a href="https://aponderingmind.org/tag/philosopher/" class="tag-cloud-link tag-link-151228 tag-link-position-75" style="font-size: 9.8439024390244pt;" aria-label="Philosopher (42 items)">Philosopher</a>
+<a href="https://aponderingmind.org/tag/philosophy/" class="tag-cloud-link tag-link-1868 tag-link-position-76" style="font-size: 11.892682926829pt;" aria-label="Philosophy (84 items)">Philosophy</a>
+<a href="https://aponderingmind.org/tag/philosophy-quotes/" class="tag-cloud-link tag-link-1795839 tag-link-position-77" style="font-size: 9.4341463414634pt;" aria-label="Philosophy Quotes (36 items)">Philosophy Quotes</a>
+<a href="https://aponderingmind.org/tag/photography/" class="tag-cloud-link tag-link-436 tag-link-position-78" style="font-size: 18.312195121951pt;" aria-label="Photography (736 items)">Photography</a>
+<a href="https://aponderingmind.org/tag/photos/" class="tag-cloud-link tag-link-304 tag-link-position-79" style="font-size: 19.131707317073pt;" aria-label="Photos (984 items)">Photos</a>
+<a href="https://aponderingmind.org/tag/poet/" class="tag-cloud-link tag-link-13705 tag-link-position-80" style="font-size: 9.6390243902439pt;" aria-label="Poet (39 items)">Poet</a>
+<a href="https://aponderingmind.org/tag/poetry/" class="tag-cloud-link tag-link-422 tag-link-position-81" style="font-size: 9.1609756097561pt;" aria-label="poetry (33 items)">poetry</a>
+<a href="https://aponderingmind.org/tag/politics/" class="tag-cloud-link tag-link-398 tag-link-position-82" style="font-size: 9.980487804878pt;" aria-label="Politics (44 items)">Politics</a>
+<a href="https://aponderingmind.org/tag/proverbs/" class="tag-cloud-link tag-link-33859 tag-link-position-83" style="font-size: 12.780487804878pt;" aria-label="Proverbs (115 items)">Proverbs</a>
+<a href="https://aponderingmind.org/tag/quick-fiction/" class="tag-cloud-link tag-link-4661323 tag-link-position-84" style="font-size: 12.507317073171pt;" aria-label="Quick Fiction (103 items)">Quick Fiction</a>
+<a href="https://aponderingmind.org/tag/quotes/" class="tag-cloud-link tag-link-755 tag-link-position-85" style="font-size: 22pt;" aria-label="Quotes (2,542 items)">Quotes</a>
+<a href="https://aponderingmind.org/tag/rain/" class="tag-cloud-link tag-link-12361 tag-link-position-86" style="font-size: 9.0243902439024pt;" aria-label="Rain (31 items)">Rain</a>
+<a href="https://aponderingmind.org/tag/ralph-waldo-emerson/" class="tag-cloud-link tag-link-282211 tag-link-position-87" style="font-size: 10.8pt;" aria-label="Ralph Waldo Emerson (58 items)">Ralph Waldo Emerson</a>
+<a href="https://aponderingmind.org/tag/reading/" class="tag-cloud-link tag-link-1473 tag-link-position-88" style="font-size: 11.551219512195pt;" aria-label="Reading (75 items)">Reading</a>
+<a href="https://aponderingmind.org/tag/reality/" class="tag-cloud-link tag-link-7849 tag-link-position-89" style="font-size: 9.6390243902439pt;" aria-label="Reality (39 items)">Reality</a>
+<a href="https://aponderingmind.org/tag/religion/" class="tag-cloud-link tag-link-116 tag-link-position-90" style="font-size: 8.6829268292683pt;" aria-label="Religion (28 items)">Religion</a>
+<a href="https://aponderingmind.org/tag/scenic-photography/" class="tag-cloud-link tag-link-2230739 tag-link-position-91" style="font-size: 11.073170731707pt;" aria-label="Scenic Photography (64 items)">Scenic Photography</a>
+<a href="https://aponderingmind.org/tag/sex/" class="tag-cloud-link tag-link-520 tag-link-position-92" style="font-size: 8.6146341463415pt;" aria-label="Sex (27 items)">Sex</a>
+<a href="https://aponderingmind.org/tag/sexy/" class="tag-cloud-link tag-link-5427 tag-link-position-93" style="font-size: 9.980487804878pt;" aria-label="Sexy (44 items)">Sexy</a>
+<a href="https://aponderingmind.org/tag/short-fiction/" class="tag-cloud-link tag-link-35735 tag-link-position-94" style="font-size: 13.463414634146pt;" aria-label="Short Fiction (144 items)">Short Fiction</a>
+<a href="https://aponderingmind.org/tag/short-story/" class="tag-cloud-link tag-link-40287 tag-link-position-95" style="font-size: 13.873170731707pt;" aria-label="Short Story (166 items)">Short Story</a>
+<a href="https://aponderingmind.org/tag/six-word-story/" class="tag-cloud-link tag-link-1747044 tag-link-position-96" style="font-size: 10.253658536585pt;" aria-label="Six Word Story (48 items)">Six Word Story</a>
+<a href="https://aponderingmind.org/tag/sky/" class="tag-cloud-link tag-link-11200 tag-link-position-97" style="font-size: 9.2292682926829pt;" aria-label="Sky (34 items)">Sky</a>
+<a href="https://aponderingmind.org/tag/sleep/" class="tag-cloud-link tag-link-2224 tag-link-position-98" style="font-size: 8.6829268292683pt;" aria-label="Sleep (28 items)">Sleep</a>
+<a href="https://aponderingmind.org/tag/snow/" class="tag-cloud-link tag-link-20341 tag-link-position-99" style="font-size: 11.482926829268pt;" aria-label="snow (73 items)">snow</a>
+<a href="https://aponderingmind.org/tag/society/" class="tag-cloud-link tag-link-620 tag-link-position-100" style="font-size: 8.1365853658537pt;" aria-label="society (23 items)">society</a>
+<a href="https://aponderingmind.org/tag/space/" class="tag-cloud-link tag-link-174 tag-link-position-101" style="font-size: 8pt;" aria-label="Space (22 items)">Space</a>
+<a href="https://aponderingmind.org/tag/spring/" class="tag-cloud-link tag-link-9486 tag-link-position-102" style="font-size: 9.0243902439024pt;" aria-label="spring (31 items)">spring</a>
+<a href="https://aponderingmind.org/tag/steven-wright/" class="tag-cloud-link tag-link-78208 tag-link-position-103" style="font-size: 8.6146341463415pt;" aria-label="Steven Wright (27 items)">Steven Wright</a>
+<a href="https://aponderingmind.org/tag/stories/" class="tag-cloud-link tag-link-955 tag-link-position-104" style="font-size: 13.39512195122pt;" aria-label="Stories (140 items)">Stories</a>
+<a href="https://aponderingmind.org/tag/summer/" class="tag-cloud-link tag-link-22302 tag-link-position-105" style="font-size: 9.0243902439024pt;" aria-label="Summer (31 items)">Summer</a>
+<a href="https://aponderingmind.org/tag/sun/" class="tag-cloud-link tag-link-429 tag-link-position-106" style="font-size: 9.0243902439024pt;" aria-label="Sun (31 items)">Sun</a>
+<a href="https://aponderingmind.org/tag/television/" class="tag-cloud-link tag-link-459 tag-link-position-107" style="font-size: 8.2731707317073pt;" aria-label="Television (24 items)">Television</a>
+<a href="https://aponderingmind.org/tag/the-beatles/" class="tag-cloud-link tag-link-68509 tag-link-position-108" style="font-size: 8.1365853658537pt;" aria-label="The Beatles (23 items)">The Beatles</a>
+<a href="https://aponderingmind.org/tag/the-guardian/" class="tag-cloud-link tag-link-97838 tag-link-position-109" style="font-size: 10.458536585366pt;" aria-label="The Guardian (52 items)">The Guardian</a>
+<a href="https://aponderingmind.org/tag/think/" class="tag-cloud-link tag-link-7413 tag-link-position-110" style="font-size: 9.980487804878pt;" aria-label="Think (44 items)">Think</a>
+<a href="https://aponderingmind.org/tag/thinking/" class="tag-cloud-link tag-link-3786 tag-link-position-111" style="font-size: 10.390243902439pt;" aria-label="Thinking (50 items)">Thinking</a>
+<a href="https://aponderingmind.org/tag/thoughts/" class="tag-cloud-link tag-link-563 tag-link-position-112" style="font-size: 21.180487804878pt;" aria-label="Thoughts (1,930 items)">Thoughts</a>
+<a href="https://aponderingmind.org/tag/time/" class="tag-cloud-link tag-link-5087 tag-link-position-113" style="font-size: 11.414634146341pt;" aria-label="Time (72 items)">Time</a>
+<a href="https://aponderingmind.org/tag/travel/" class="tag-cloud-link tag-link-200 tag-link-position-114" style="font-size: 8.2731707317073pt;" aria-label="Travel (24 items)">Travel</a>
+<a href="https://aponderingmind.org/tag/trees/" class="tag-cloud-link tag-link-16111 tag-link-position-115" style="font-size: 10.663414634146pt;" aria-label="trees (55 items)">trees</a>
+<a href="https://aponderingmind.org/tag/truth/" class="tag-cloud-link tag-link-106 tag-link-position-116" style="font-size: 11.346341463415pt;" aria-label="Truth (70 items)">Truth</a>
+<a href="https://aponderingmind.org/tag/tv/" class="tag-cloud-link tag-link-462 tag-link-position-117" style="font-size: 8.1365853658537pt;" aria-label="TV (23 items)">TV</a>
+<a href="https://aponderingmind.org/tag/water/" class="tag-cloud-link tag-link-14157 tag-link-position-118" style="font-size: 9.5024390243902pt;" aria-label="water (37 items)">water</a>
+<a href="https://aponderingmind.org/tag/weather/" class="tag-cloud-link tag-link-4494 tag-link-position-119" style="font-size: 11.414634146341pt;" aria-label="Weather (71 items)">Weather</a>
+<a href="https://aponderingmind.org/tag/wikimedia/" class="tag-cloud-link tag-link-6132 tag-link-position-120" style="font-size: 8.2731707317073pt;" aria-label="Wikimedia (24 items)">Wikimedia</a>
+<a href="https://aponderingmind.org/tag/wikipedia/" class="tag-cloud-link tag-link-5547 tag-link-position-121" style="font-size: 8.6146341463415pt;" aria-label="Wikipedia (27 items)">Wikipedia</a>
+<a href="https://aponderingmind.org/tag/winter/" class="tag-cloud-link tag-link-9484 tag-link-position-122" style="font-size: 9.9121951219512pt;" aria-label="Winter (43 items)">Winter</a>
+<a href="https://aponderingmind.org/tag/wisdom/" class="tag-cloud-link tag-link-15201 tag-link-position-123" style="font-size: 20.360975609756pt;" aria-label="Wisdom (1,477 items)">Wisdom</a>
+<a href="https://aponderingmind.org/tag/words/" class="tag-cloud-link tag-link-4822 tag-link-position-124" style="font-size: 11.756097560976pt;" aria-label="Words (80 items)">Words</a>
+<a href="https://aponderingmind.org/tag/work/" class="tag-cloud-link tag-link-131 tag-link-position-125" style="font-size: 8.2731707317073pt;" aria-label="Work (24 items)">Work</a>
+<a href="https://aponderingmind.org/tag/world/" class="tag-cloud-link tag-link-1857 tag-link-position-126" style="font-size: 13.190243902439pt;" aria-label="World (132 items)">World</a>
+<a href="https://aponderingmind.org/tag/writer/" class="tag-cloud-link tag-link-15440 tag-link-position-127" style="font-size: 10.458536585366pt;" aria-label="Writer (52 items)">Writer</a>
+<a href="https://aponderingmind.org/tag/writing/" class="tag-cloud-link tag-link-349 tag-link-position-128" style="font-size: 13.053658536585pt;" aria-label="Writing (124 items)">Writing</a>
+<a href="https://aponderingmind.org/tag/zen/" class="tag-cloud-link tag-link-3379 tag-link-position-129" style="font-size: 12.780487804878pt;" aria-label="Zen (114 items)">Zen</a>
+<a href="https://aponderingmind.org/tag/zen-quotes/" class="tag-cloud-link tag-link-296931 tag-link-position-130" style="font-size: 9.4341463414634pt;" aria-label="Zen Quotes (36 items)">Zen Quotes</a></div></section><section id="text-10" class="widget widget_text"><h2 class="widget-title">Awards Free Blog</h2>			<div class="textwidget">Please, I do not accept awards.
+Likes and comments work for me....</div>
+		</section><section id="blog-stats-2" class="widget widget_blog-stats"><h2 class="widget-title">Blog Hits</h2>		<ul>
+			<li>955,669 hits</li>
+		</ul>
+		</section><section id="archives-5" class="widget widget_archive"><h2 class="widget-title">Archives</h2>		<label class="screen-reader-text" for="archives-dropdown-5">Archives</label>
+		<select id="archives-dropdown-5" name="archive-dropdown">
+			
+			<option value="">Select Month</option>
+				<option value='https://aponderingmind.org/2020/05/'> May 2020 </option>
+	<option value='https://aponderingmind.org/2020/04/'> April 2020 </option>
+	<option value='https://aponderingmind.org/2020/03/'> March 2020 </option>
+	<option value='https://aponderingmind.org/2020/02/'> February 2020 </option>
+	<option value='https://aponderingmind.org/2020/01/'> January 2020 </option>
+	<option value='https://aponderingmind.org/2019/12/'> December 2019 </option>
+	<option value='https://aponderingmind.org/2019/11/'> November 2019 </option>
+	<option value='https://aponderingmind.org/2019/10/'> October 2019 </option>
+	<option value='https://aponderingmind.org/2019/09/'> September 2019 </option>
+	<option value='https://aponderingmind.org/2019/08/'> August 2019 </option>
+	<option value='https://aponderingmind.org/2019/07/'> July 2019 </option>
+	<option value='https://aponderingmind.org/2019/06/'> June 2019 </option>
+	<option value='https://aponderingmind.org/2019/05/'> May 2019 </option>
+	<option value='https://aponderingmind.org/2019/04/'> April 2019 </option>
+	<option value='https://aponderingmind.org/2019/03/'> March 2019 </option>
+	<option value='https://aponderingmind.org/2019/02/'> February 2019 </option>
+	<option value='https://aponderingmind.org/2019/01/'> January 2019 </option>
+	<option value='https://aponderingmind.org/2018/12/'> December 2018 </option>
+	<option value='https://aponderingmind.org/2018/11/'> November 2018 </option>
+	<option value='https://aponderingmind.org/2018/10/'> October 2018 </option>
+	<option value='https://aponderingmind.org/2018/09/'> September 2018 </option>
+	<option value='https://aponderingmind.org/2018/08/'> August 2018 </option>
+	<option value='https://aponderingmind.org/2018/07/'> July 2018 </option>
+	<option value='https://aponderingmind.org/2018/06/'> June 2018 </option>
+	<option value='https://aponderingmind.org/2018/05/'> May 2018 </option>
+	<option value='https://aponderingmind.org/2018/04/'> April 2018 </option>
+	<option value='https://aponderingmind.org/2018/03/'> March 2018 </option>
+	<option value='https://aponderingmind.org/2018/02/'> February 2018 </option>
+	<option value='https://aponderingmind.org/2018/01/'> January 2018 </option>
+	<option value='https://aponderingmind.org/2017/12/'> December 2017 </option>
+	<option value='https://aponderingmind.org/2017/11/'> November 2017 </option>
+	<option value='https://aponderingmind.org/2017/10/'> October 2017 </option>
+	<option value='https://aponderingmind.org/2017/09/'> September 2017 </option>
+	<option value='https://aponderingmind.org/2017/08/'> August 2017 </option>
+	<option value='https://aponderingmind.org/2017/07/'> July 2017 </option>
+	<option value='https://aponderingmind.org/2017/06/'> June 2017 </option>
+	<option value='https://aponderingmind.org/2017/05/'> May 2017 </option>
+	<option value='https://aponderingmind.org/2017/04/'> April 2017 </option>
+	<option value='https://aponderingmind.org/2017/03/'> March 2017 </option>
+	<option value='https://aponderingmind.org/2017/02/'> February 2017 </option>
+	<option value='https://aponderingmind.org/2017/01/'> January 2017 </option>
+	<option value='https://aponderingmind.org/2016/12/'> December 2016 </option>
+	<option value='https://aponderingmind.org/2016/11/'> November 2016 </option>
+	<option value='https://aponderingmind.org/2016/10/'> October 2016 </option>
+	<option value='https://aponderingmind.org/2016/09/'> September 2016 </option>
+	<option value='https://aponderingmind.org/2016/08/'> August 2016 </option>
+	<option value='https://aponderingmind.org/2016/07/'> July 2016 </option>
+	<option value='https://aponderingmind.org/2016/06/'> June 2016 </option>
+	<option value='https://aponderingmind.org/2016/05/'> May 2016 </option>
+	<option value='https://aponderingmind.org/2016/04/'> April 2016 </option>
+	<option value='https://aponderingmind.org/2016/03/'> March 2016 </option>
+	<option value='https://aponderingmind.org/2016/02/'> February 2016 </option>
+	<option value='https://aponderingmind.org/2016/01/'> January 2016 </option>
+	<option value='https://aponderingmind.org/2015/12/'> December 2015 </option>
+	<option value='https://aponderingmind.org/2015/11/'> November 2015 </option>
+	<option value='https://aponderingmind.org/2015/10/'> October 2015 </option>
+	<option value='https://aponderingmind.org/2015/09/'> September 2015 </option>
+	<option value='https://aponderingmind.org/2015/08/'> August 2015 </option>
+	<option value='https://aponderingmind.org/2015/07/'> July 2015 </option>
+	<option value='https://aponderingmind.org/2015/06/'> June 2015 </option>
+	<option value='https://aponderingmind.org/2015/05/'> May 2015 </option>
+	<option value='https://aponderingmind.org/2015/04/'> April 2015 </option>
+	<option value='https://aponderingmind.org/2015/03/'> March 2015 </option>
+	<option value='https://aponderingmind.org/2015/02/'> February 2015 </option>
+	<option value='https://aponderingmind.org/2015/01/'> January 2015 </option>
+	<option value='https://aponderingmind.org/2014/12/'> December 2014 </option>
+	<option value='https://aponderingmind.org/2014/11/'> November 2014 </option>
+	<option value='https://aponderingmind.org/2014/10/'> October 2014 </option>
+	<option value='https://aponderingmind.org/2014/09/'> September 2014 </option>
+	<option value='https://aponderingmind.org/2014/08/'> August 2014 </option>
+	<option value='https://aponderingmind.org/2014/07/'> July 2014 </option>
+	<option value='https://aponderingmind.org/2014/06/'> June 2014 </option>
+	<option value='https://aponderingmind.org/2014/05/'> May 2014 </option>
+	<option value='https://aponderingmind.org/2014/04/'> April 2014 </option>
+	<option value='https://aponderingmind.org/2014/03/'> March 2014 </option>
+	<option value='https://aponderingmind.org/2014/02/'> February 2014 </option>
+	<option value='https://aponderingmind.org/2014/01/'> January 2014 </option>
+	<option value='https://aponderingmind.org/2013/12/'> December 2013 </option>
+	<option value='https://aponderingmind.org/2013/11/'> November 2013 </option>
+	<option value='https://aponderingmind.org/2013/10/'> October 2013 </option>
+	<option value='https://aponderingmind.org/2013/09/'> September 2013 </option>
+	<option value='https://aponderingmind.org/2013/08/'> August 2013 </option>
+	<option value='https://aponderingmind.org/2013/07/'> July 2013 </option>
+	<option value='https://aponderingmind.org/2013/06/'> June 2013 </option>
+	<option value='https://aponderingmind.org/2013/05/'> May 2013 </option>
+	<option value='https://aponderingmind.org/2013/04/'> April 2013 </option>
+	<option value='https://aponderingmind.org/2013/03/'> March 2013 </option>
+	<option value='https://aponderingmind.org/2013/02/'> February 2013 </option>
+	<option value='https://aponderingmind.org/2013/01/'> January 2013 </option>
+	<option value='https://aponderingmind.org/2012/12/'> December 2012 </option>
+	<option value='https://aponderingmind.org/2012/11/'> November 2012 </option>
+	<option value='https://aponderingmind.org/2012/10/'> October 2012 </option>
+	<option value='https://aponderingmind.org/2012/09/'> September 2012 </option>
+	<option value='https://aponderingmind.org/2012/08/'> August 2012 </option>
+	<option value='https://aponderingmind.org/2012/07/'> July 2012 </option>
+	<option value='https://aponderingmind.org/2012/06/'> June 2012 </option>
+	<option value='https://aponderingmind.org/2012/05/'> May 2012 </option>
+	<option value='https://aponderingmind.org/2012/02/'> February 2012 </option>
+	<option value='https://aponderingmind.org/2012/01/'> January 2012 </option>
+	<option value='https://aponderingmind.org/2011/10/'> October 2011 </option>
+	<option value='https://aponderingmind.org/2011/08/'> August 2011 </option>
+	<option value='https://aponderingmind.org/2011/04/'> April 2011 </option>
+	<option value='https://aponderingmind.org/2011/02/'> February 2011 </option>
+	<option value='https://aponderingmind.org/2011/01/'> January 2011 </option>
+	<option value='https://aponderingmind.org/2010/12/'> December 2010 </option>
+	<option value='https://aponderingmind.org/2010/07/'> July 2010 </option>
+	<option value='https://aponderingmind.org/2010/01/'> January 2010 </option>
+
+		</select>
+
+<script type="text/javascript">
+/* <![CDATA[ */
+(function() {
+	var dropdown = document.getElementById( "archives-dropdown-5" );
+	function onSelectChange() {
+		if ( dropdown.options[ dropdown.selectedIndex ].value !== '' ) {
+			document.location.href = this.options[ this.selectedIndex ].value;
+		}
+	}
+	dropdown.onchange = onSelectChange;
+})();
+/* ]]> */
+</script>
+
+		</section><section id="text-14" class="widget widget_text">			<div class="textwidget"><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work aponderingmind.org  is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.</div>
+		</section>	</aside><!-- .widget-area -->
+
+
+		<div class="site-info">
+										<a class="site-name" href="https://aponderingmind.org/" rel="home">A Pondering Mind</a><span class="comma">,</span>
+											</div><!-- .site-info -->
+	</footer><!-- #colophon -->
+
+</div><!-- #page -->
+
+<!--  -->
+<script src='//0.gravatar.com/js/gprofiles.js?ver=202021y'></script>
+<script>
+var WPGroHo = {"my_hash":""};
+</script>
+<script type='text/javascript' src='https://s0.wp.com/wp-content/mu-plugins/gravatar-hovercards/wpgroho.js?m=1380573781h'></script>
+
+	<script>
+		//initialize and attach hovercards to all gravatars
+		jQuery( document ).ready( function( $ ) {
+
+			if (typeof Gravatar === "undefined"){
+				return;
+			}
+
+			if ( typeof Gravatar.init !== "function" ) {
+				return;
+			}			
+
+			Gravatar.profile_cb = function( hash, id ) {
+				WPGroHo.syncProfileData( hash, id );
+			};
+			Gravatar.my_hash = WPGroHo.my_hash;
+			Gravatar.init( 'body', '#wp-admin-bar-my-account' );
+		});
+	</script>
+
+		<div style="display:none">
+	<div class="grofile-hash-map-459ca24b36317fe252b72d8fb3c0b812">
+	</div>
+	<div class="grofile-hash-map-7655ec6fe7be8eee4a070d6b2efeccf1">
+	</div>
+	<div class="grofile-hash-map-c1fd808f5aab704e63d5c3921e392c6d">
+	</div>
+	<div class="grofile-hash-map-e721aa6685bf435b7ff2b654909a5b32">
+	</div>
+	</div>
+
+	<div id="carousel-reblog-box">
+		<form action="#" name="carousel-reblog">
+			<textarea id="carousel-reblog-content" name="carousel-reblog-content" placeholder="Add your thoughts here... (optional)"></textarea>
+			<label for="carousel-reblog-to-blog-id" id="carousel-reblog-lblogid">Post to</label>
+			<select name="carousel-reblog-to-blog-id" id="carousel-reblog-to-blog-id">
+						</select>
+
+			<div class="submit">
+				<span class="canceltext"><a href="#" class="cancel">Cancel</a></span>
+				<input type="submit" name="carousel-reblog-submit" class="button" id="carousel-reblog-submit" value="Reblog Post" />
+				<input type="hidden" id="carousel-reblog-blog-id" value="11283610" />
+				<input type="hidden" id="carousel-reblog-blog-url" value="https://aponderingmind.org" />
+				<input type="hidden" id="carousel-reblog-blog-title" value="A Pondering Mind" />
+				<input type="hidden" id="carousel-reblog-post-url" value="" />
+				<input type="hidden" id="carousel-reblog-post-title" value="" />
+			</div>
+
+			<input type="hidden" id="_wpnonce" name="_wpnonce" value="f82ba018a9" /><input type="hidden" name="_wp_http_referer" value="/2013/04/01/boston-after-dark/" />		</form>
+
+		<div class="arrow"></div>
+	</div>
+	<div id="sharing_email" style="display: none;">
+		<form action="/2013/04/01/boston-after-dark/" method="post">
+			<label for="target_email">Send to Email Address</label>
+			<input type="email" name="target_email" id="target_email" value="" />
+
+			
+				<label for="source_name">Your Name</label>
+				<input type="text" name="source_name" id="source_name" value="" />
+
+				<label for="source_email">Your Email Address</label>
+				<input type="email" name="source_email" id="source_email" value="" />
+
+						<input type="text" id="jetpack-source_f_name" name="source_f_name" class="input" value="" size="25" autocomplete="off" title="This field is for validation and should not be changed" />
+			
+			<div
+				class="g-recaptcha"
+				data-sitekey="6LcmyE0UAAAAALID28yVNg7pFCodGaArJzHitez_"
+				data-theme="light"
+				data-type="image"
+				data-tabindex="0"></div>
+			<script type="text/javascript" src="https://www.google.com/recaptcha/api.js?hl=en" async></script>
+			
+			<img style="float: right; display: none" class="loading" src="https://s0.wp.com/wp-content/mu-plugins/post-flair/sharing/images/loading.gif" alt="loading" width="16" height="16" />
+			<input type="submit" value="Send Email" class="sharing_send" />
+			<a rel="nofollow" href="#cancel" class="sharing_cancel" role="button">Cancel</a>
+
+			<div class="errors errors-1" style="display: none;">
+				Post was not sent - check your email addresses!			</div>
+
+			<div class="errors errors-2" style="display: none;">
+				Email check failed, please try again			</div>
+
+			<div class="errors errors-3" style="display: none;">
+				Sorry, your blog cannot share posts by email.			</div>
+		</form>
+	</div>
+<div class="widget widget_eu_cookie_law_widget"><div
+	class="hide-on-button"
+	data-hide-timeout="30"
+	data-consent-expiration="180"
+	id="eu-cookie-law"
+>
+	<form method="post">
+		<input type="submit" value="Close and accept" class="accept" />
+
+		Privacy &amp; Cookies: This site uses cookies. By continuing to use this website, you agree to their use. <br />
+To find out more, including how to control cookies, see here:
+		<a href="https://automattic.com/cookies" >
+			Cookie Policy		</a>
+ </form>
+</div>
+</div><link rel='stylesheet' id='all-css-0-2' href='https://s0.wp.com/wp-content/mu-plugins/carousel/jetpack-carousel.css?m=1563361695h&cssminify=yes' type='text/css' media='all' />
+<script>
+var comment_like_text = {"loading":"Loading..."};
+</script>
+<script>
+var actionbardata = {"siteID":"11283610","siteName":"A Pondering Mind","siteURL":"https:\/\/aponderingmind.org","icon":"<img alt='' src='https:\/\/doninmass.files.wordpress.com\/2018\/07\/cropped-p12060314451401.jpg?w=50' class='avatar avatar-50' height='50' width='50' \/>","canManageOptions":"","canCustomizeSite":"","isFollowing":"","themeSlug":"pub\/shawburn","signupURL":"https:\/\/wordpress.com\/start\/","loginURL":"https:\/\/wordpress.com\/log-in?redirect_to=https%3A%2F%2Faponderingmind.org%2F2013%2F04%2F01%2Fboston-after-dark%2F&signup_flow=account&domain=aponderingmind.org","themeURL":"https:\/\/wordpress.com\/theme\/shawburn\/","xhrURL":"https:\/\/aponderingmind.org\/wp-admin\/admin-ajax.php","nonce":"b5a4dd8f21","isSingular":"1","isFolded":"","isLoggedIn":"","isMobile":"","subscribeNonce":"<input type=\"hidden\" id=\"_wpnonce\" name=\"_wpnonce\" value=\"b316ac51bb\" \/>","referer":"https:\/\/aponderingmind.org\/2013\/04\/01\/boston-after-dark\/","canFollow":"1","feedID":"21768640","statusMessage":"","customizeLink":"https:\/\/doninmass.wordpress.com\/wp-admin\/customize.php?url=https%3A%2F%2Fdoninmass.wordpress.com%2F2013%2F04%2F01%2Fboston-after-dark%2F","postID":"13414","shortlink":"https:\/\/wp.me\/pLlnI-3um","canEditPost":"","editLink":"https:\/\/wordpress.com\/post\/aponderingmind.org\/13414","statsLink":"https:\/\/wordpress.com\/stats\/post\/13414\/aponderingmind.org","i18n":{"view":"View site","follow":"Follow","following":"Following","edit":"Edit","login":"Log in","signup":"Sign up","customize":"Customize","report":"Report this content","themeInfo":"Get theme: Shawburn","shortlink":"Copy shortlink","copied":"Copied","followedText":"New posts from this site will now appear in your <a href=\"https:\/\/wordpress.com\/read\">Reader<\/a>","foldBar":"Collapse this bar","unfoldBar":"Expand this bar","editSubs":"Manage subscriptions","viewReader":"View site in Reader","viewReadPost":"View post in Reader","subscribe":"Sign me up","enterEmail":"Enter your email address","followers":"Join 2,758 other followers","alreadyUser":"Already have a WordPress.com account? <a href=\"https:\/\/wordpress.com\/log-in?redirect_to=https%3A%2F%2Faponderingmind.org%2F2013%2F04%2F01%2Fboston-after-dark%2F&signup_flow=account&domain=aponderingmind.org\">Log in now.<\/a>","stats":"Stats"}};
+</script>
+<script>
+var jetpackCarouselStrings = {"widths":[370,700,1000,1200,1400,2000],"is_logged_in":"","lang":"en","ajaxurl":"https:\/\/aponderingmind.org\/wp-admin\/admin-ajax.php","nonce":"11722f4061","display_exif":"1","display_comments":"1","display_geo":"1","single_image_gallery":"1","single_image_gallery_media_file":"","background_color":"black","comment":"Comment","post_comment":"Post Comment","write_comment":"Write a Comment...","loading_comments":"Loading Comments...","download_original":"View full size <span class=\"photo-size\">{0}<span class=\"photo-size-times\">\u00d7<\/span>{1}<\/span>","no_comment_text":"Please be sure to submit some text with your comment.","no_comment_email":"Please provide an email address to comment.","no_comment_author":"Please provide your name to comment.","comment_post_error":"Sorry, but there was an error posting your comment. Please try again later.","comment_approved":"Your comment was approved.","comment_unapproved":"Your comment is in moderation.","camera":"Camera","aperture":"Aperture","shutter_speed":"Shutter Speed","focal_length":"Focal Length","copyright":"Copyright","comment_registration":"0","require_name_email":"0","login_url":"https:\/\/doninmass.wordpress.com\/wp-login.php?redirect_to=https%3A%2F%2Faponderingmind.org%2F2013%2F04%2F01%2Fboston-after-dark%2F","blog_id":"11283610","meta_data":["camera","aperture","shutter_speed","focal_length","copyright"],"local_comments_commenting_as":"<fieldset><label for=\"email\">Email<\/label> <input type=\"text\" name=\"email\" class=\"jp-carousel-comment-form-field jp-carousel-comment-form-text-field\" id=\"jp-carousel-comment-form-email-field\" \/><\/fieldset><fieldset><label for=\"author\">Name<\/label> <input type=\"text\" name=\"author\" class=\"jp-carousel-comment-form-field jp-carousel-comment-form-text-field\" id=\"jp-carousel-comment-form-author-field\" \/><\/fieldset><fieldset><label for=\"url\">Website<\/label> <input type=\"text\" name=\"url\" class=\"jp-carousel-comment-form-field jp-carousel-comment-form-text-field\" id=\"jp-carousel-comment-form-url-field\" \/><\/fieldset>","reblog":"Reblog","reblogged":"Reblogged","reblog_add_thoughts":"Add your thoughts here... (optional)","reblogging":"Reblogging...","post_reblog":"Post Reblog","stats_query_args":"blog=11283610&v=wpcom&tz=-4&user_id=0&subd=doninmass","is_public":"1","reblog_enabled":""};
+</script>
+<script>
+var _wp_google_translate_widget = {"lang":"en","layout":"0"};
+</script>
+<script type='text/javascript' src='https://s0.wp.com/_static/??-eJylU1tywjAMvFAd44EO8NHpWRxbBAW/atmk9PR1SkKhYdLXV5SVtJJ3VrwLTHmXwCXeEtdwRAXhtWrpgd+mgqdkgUg2cCfbvmSIp+FToTsidN+WtZCCVAcWgfBtwmozCyY36IgbPADx0pRhL502EMdidMpkXZL98kiJH8FpH/tU8Oa0Q2Mqi+4r90i8y8YwwgQMNCZ0zTCSC7FYLldLseEOOvrYsjZeHYYpJS6lRRE6w+zee8chTS6/NcSmZCLwTSWqBeuC8pbXGY3mKDaOo9Mw0f3HFNrbIqPUp3/ySCH+SwGkZAC2T9bMM/1VfCWjzwRmRvor75TFbIHY2UNtb6aaU4dhznCTphtgplHq4jZWy8itpASxRMwfIUbsTXrBfsmQYtFgdqxK6F3fdInuXQiFz1O4xm/P8rrqnjaD/Hw83xGY6elQN5CKebxvDPTvcWRkgglQOJ7tk3jcbLfb9Wot2ncNy7bb'></script>
+<script type='text/javascript'>
+( 'fetch' in window ) || document.write( '<script src="https://s0.wp.com/wp-includes/js/dist/vendor/wp-polyfill-fetch.min.js?m=1573572739h&#038;ver=3.0.0"></scr' + 'ipt>' );( document.contains ) || document.write( '<script src="https://s0.wp.com/wp-includes/js/dist/vendor/wp-polyfill-node-contains.min.js?m=1540208548h&#038;ver=3.42.0"></scr' + 'ipt>' );( window.DOMRect ) || document.write( '<script src="https://s0.wp.com/wp-includes/js/dist/vendor/wp-polyfill-dom-rect.min.js?m=1585663916h&#038;ver=3.42.0"></scr' + 'ipt>' );( window.URL && window.URL.prototype && window.URLSearchParams ) || document.write( '<script src="https://s0.wp.com/wp-includes/js/dist/vendor/wp-polyfill-url.min.js?m=1585663916h&#038;ver=3.6.4"></scr' + 'ipt>' );( window.FormData && window.FormData.prototype.keys ) || document.write( '<script src="https://s0.wp.com/wp-includes/js/dist/vendor/wp-polyfill-formdata.min.js?m=1550600082h&#038;ver=3.0.12"></scr' + 'ipt>' );( Element.prototype.matches && Element.prototype.closest ) || document.write( '<script src="https://s0.wp.com/wp-includes/js/dist/vendor/wp-polyfill-element-closest.min.js?m=1540208548h&#038;ver=2.0.2"></scr' + 'ipt>' );
+( window.URL && window.URL.prototype && window.URLSearchParams ) || document.write( '<script src="https://s0.wp.com/wp-content/plugins/gutenberg-core/8.1.0-wpcom/vendor/wp-polyfill-url.min.7490158b.js?m=1589993648h&#038;ver=3.6.4"></scr' + 'ipt>' );
+( window.DOMRect ) || document.write( '<script src="https://s0.wp.com/wp-content/plugins/gutenberg-core/8.1.0-wpcom/vendor/wp-polyfill-dom-rect.7e21c103.js?m=1589993648h&#038;ver=3.42.0"></scr' + 'ipt>' );
+</script>
+<script src='//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit&#038;ver=5.4.1'></script>
+<script>
+var sharing_js_options = {"lang":"en","counts":"1","is_stats_active":"1"};
+</script>
+<script type='text/javascript' src='https://s0.wp.com/wp-content/mu-plugins/post-flair/sharing/sharing.js?m=1564557884h'></script>
+<script type='text/javascript'>
+var windowOpen;
+			jQuery( document.body ).on( 'click', 'a.share-pocket', function() {
+				// If there's another sharing window open, close it.
+				if ( 'undefined' !== typeof windowOpen ) {
+					windowOpen.close();
+				}
+				windowOpen = window.open( jQuery( this ).attr( 'href' ), 'wpcompocket', 'menubar=1,resizable=1,width=450,height=450' );
+				return false;
+			});
+</script>
+	<script>
+	/(trident|msie)/i.test(navigator.userAgent)&&document.getElementById&&window.addEventListener&&window.addEventListener("hashchange",function(){var t,e=location.hash.substring(1);/^[A-z0-9_-]+$/.test(e)&&(t=document.getElementById(e))&&(/^(?:a|select|input|button|textarea)$/i.test(t.tagName)||(t.tabIndex=-1),t.focus())},!1);
+	</script>
+	<script type="text/javascript">
+// <![CDATA[
+(function() {
+try{
+  if ( window.external &&'msIsSiteMode' in window.external) {
+    if (window.external.msIsSiteMode()) {
+      var jl = document.createElement('script');
+      jl.type='text/javascript';
+      jl.async=true;
+      jl.src='/wp-content/plugins/ie-sitemode/custom-jumplist.php';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(jl, s);
+    }
+  }
+}catch(e){}
+})();
+// ]]>
+</script>		<iframe src='https://widgets.wp.com/likes/master.html?ver=20190321#ver=20190321' scrolling='no' id='likes-master' name='likes-master' style='display:none;'></iframe>
+		<div id='likes-other-gravatars'><div class="likes-text"><span>%d</span> bloggers like this:</div><ul class="wpl-avatars sd-like-gravatars"></ul></div>
+<script src="//stats.wp.com/w.js?61" type="text/javascript" async defer></script>
+<script type="text/javascript">
+_tkq = window._tkq || [];
+_stq = window._stq || [];
+_tkq.push(['storeContext', {'blog_id':'11283610','blog_tz':'-4','user_lang':'en','blog_lang':'en','user_id':'0'}]);
+_stq.push(['view', {'blog':'11283610','v':'wpcom','tz':'-4','user_id':'0','post':'13414','subd':'doninmass'}]);
+_stq.push(['extra', {'crypt':'UE40eW5QN0p8M2Y/RE1hV3xrb2xUT3JBbjREZWgvK29XZW1Bbl82dys4Zj9tVXI0M0drUj1wLTgsNzdteT9DUTdrMjVlLV9zaTllS1JRVXlHOGI3RnJ2cGosK0Q/WWUleTBRZmlLb0ZxMS1FZ2I1WkVmczJYSnIlOGJ4ZGx2SHcxcUY4UXh8NS58fHQzaW9bSVpyVjBNQUZKRVA5THVhUDI2a2FrTHxUaXp3b19IbWhnXy5SQ1ImV1VCMy1SJmRQMWguck9zUWt6ckxdak5aTTRxUU9JZ0VEK3QlcnVIcUItRHksdW1DS29iZVZdJVJbNDklY2JQM0NUPWFDc1FZVS9iRnFuMGpFZVVjZkFCfCtYW082K2xsOCtFZXR1TURhaCtxS2tVK2hMZFNQQk1KbmVFNSV0TjFJLXFleVlzJlliUi1LPW1hRUpfc0x3NitrNE5nc2UlP0NIQVhRMk9HUWgsMWE='}]);
+_stq.push([ 'clickTrackerInit', '11283610', '13414' ]);
+	</script>
+<noscript><img src="https://pixel.wp.com/b.gif?v=noscript" style="height:0px;width:0px;overflow:hidden" alt="" /></noscript>
+<script>
+if ( 'object' === typeof wpcom_mobile_user_agent_info ) {
+
+	wpcom_mobile_user_agent_info.init();
+	var mobileStatsQueryString = "";
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedPlatformName )
+		mobileStatsQueryString += "&x_" + 'mobile_platforms' + '=' + wpcom_mobile_user_agent_info.matchedPlatformName;
+	
+	if( false !== wpcom_mobile_user_agent_info.matchedUserAgentName )
+		mobileStatsQueryString += "&x_" + 'mobile_devices' + '=' + wpcom_mobile_user_agent_info.matchedUserAgentName;
+	
+	if( wpcom_mobile_user_agent_info.isIPad() )
+		mobileStatsQueryString += "&x_" + 'ipad_views' + '=' + 'views';
+
+	if( "" != mobileStatsQueryString ) {
+		new Image().src = document.location.protocol + '//pixel.wp.com/g.gif?v=wpcom-no-pv' + mobileStatsQueryString + '&baba=' + Math.random();
+	}
+	
+}
+</script>
+</body>
+</html>
